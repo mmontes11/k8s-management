@@ -3,7 +3,7 @@
 
 This repo sets up a management cluster based on [k3s](https://github.com/k3s-io/k3s/), installs [Cluster API](https://github.com/kubernetes-sigs/cluster-api) and performs bootstrapping.
 
-### Installation
+### Install
 
 Install the k3s management cluster:
 
@@ -20,7 +20,15 @@ TOKEN_PATH="$(pwd)/backups/token" \
 bash scripts/cluster.sh
 ```
 
-### Backup and Restore
+### Upgrade
+
+```bash
+sudo \
+K3S_VERSION="v1.33.1+k3s1" \
+bash scripts/cluster.sh
+```
+
+### Backup and restore
 
 To take an on-demand backup of the management cluster in the local `backups` directory, run:
 
@@ -37,3 +45,9 @@ SNAPSHOT_PATH="$(pwd)/backups/on-demand-management-1749986019" \
 TOKEN_PATH="$(pwd)/backups/token" \
 bash scripts/restore.sh
 ```
+
+### Uninstall
+
+```bash
+k3s-uninstall.sh
+``` 
