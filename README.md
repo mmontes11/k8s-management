@@ -20,12 +20,6 @@ TOKEN_PATH="$(pwd)/backups/token" \
 bash scripts/cluster.sh
 ```
 
-### Install [k8s-tooling](https://github.com/mmontes11/k8s-tooling)
-
-```bash
-curl -sfL https://raw.githubusercontent.com/mmontes11/k8s-tooling/main/kubernetes.sh | sudo bash -s -
-```
-
 ### Upgrade
 
 ```bash
