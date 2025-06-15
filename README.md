@@ -22,14 +22,14 @@ bash scripts/cluster.sh
 
 ### Backup and Restore
 
-To take an on-demand backup of the management cluster in the local `backups` directory, run
+To take an on-demand backup of the management cluster in the local `backups` directory, run:
 
 ```bash
 sudo bash scripts/backup.sh
 ```
 Alternatively, scheduled backups available in `/var/lib/rancher/k3s/server/db/snapshots` can be used.
 
-To restore a backup in a existing cluster, set the `SNAPSHOT_PATH` and `TOKEN_PATH` environment variables using absolute paths abd run:
+To restore a backup in a existing cluster, set the `SNAPSHOT_PATH` and `TOKEN_PATH` environment variables using absolute paths and run:
 
 ```bash
 sudo \
