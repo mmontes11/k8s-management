@@ -7,7 +7,7 @@ This repo sets up the management cluster, installs Cluster API and performs boot
 
 1. Install the k3s management cluster:
 
-``bash
+```bash
 sudo bash management-cluster.sh
 ```
 
