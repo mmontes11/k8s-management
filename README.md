@@ -20,6 +20,20 @@ TOKEN_PATH="$(pwd)/backups/token" \
 bash scripts/cluster.sh
 ```
 
+### Bootstrap
+
+To install Cluster API and bootstrap a workload cluster, run:
+
+```bash
+sudo \
+GITHUB_USER=mmontes11 \
+GITHUB_REPO=k8s-management \ 
+GITHUB_BRANCH=main \
+GITHUB_PATH=clusters/management \
+GITHUB_TOKEN=$GITHUB_TOKEN \
+bash scripts/bootstrap.sh
+``` 
+
 ### Upgrade
 
 ```bash
