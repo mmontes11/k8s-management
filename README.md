@@ -1,7 +1,9 @@
 # k8s-management
-🐢 Bootstrap Kubernetes clusters with Cluster API
+🐢 Bootstrap Kubernetes clusters with Cluster API, Talos and Proxmox
 
-This repo sets up a management cluster based on [k3s](https://github.com/k3s-io/k3s/), installs [Cluster API](https://github.com/kubernetes-sigs/cluster-api) and performs bootstrapping.
+This repo sets up a [k3s](https://github.com/k3s-io/k3s) management cluster, installs [Cluster API](https://cluster-api.sigs.k8s.io/) and performs bootstrapping of [Talos](https://www.talos.dev/) workload clusters on top of [Proxmox](https://www.proxmox.com/) infrastructure.
+
+Inspired by this [blog post](https://a-cup-of.coffee/blog/talos-capi-proxmox/) from [@qjoly](https://github.com/qjoly/).
 
 ### Install
 
