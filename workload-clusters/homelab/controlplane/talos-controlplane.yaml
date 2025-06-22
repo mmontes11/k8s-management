@@ -9,6 +9,7 @@ spec:
     kind: ProxmoxMachineTemplate
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
     name: proxmox-controlplane-template
+    namespace: homelab
   controlPlaneConfig:
     controlplane:
       hostname:
