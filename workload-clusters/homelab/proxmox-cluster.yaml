@@ -17,3 +17,5 @@ spec:
     gateway: 10.0.0.1
     metric: 100
     prefix: 24
+  schedulerHints:
+    memoryAdjustment: 0
