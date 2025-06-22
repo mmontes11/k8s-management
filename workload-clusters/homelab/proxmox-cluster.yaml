@@ -1,0 +1,19 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxCluster
+metadata:
+  name: proxmox-cluster
+spec:
+  allowedNodes:
+  - proxmox
+  controlPlaneEndpoint:
+    host: 10.0.0.12
+    port: 6443
+  dnsServers:
+  - 8.8.8.8
+  - 8.8.4.4
+  ipv4Config:
+    addresses:
+    - 10.0.0.26-10.0.0.29
+    gateway: 10.0.0.1
+    metric: 100
+    prefix: 24
