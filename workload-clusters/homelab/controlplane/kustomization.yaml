@@ -4,3 +4,5 @@ namespace: homelab
 resources:
   - cluster.yaml
   - proxmox-cluster.yaml
+  - proxmox-controlplane-template.yaml
+  - talos-controlplane.yaml

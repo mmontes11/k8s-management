@@ -1,0 +1,24 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: proxmox-controlplane-template
+spec:
+  template:
+    spec:
+      disks:
+        bootVolume:
+          disk: scsi0
+          sizeGb: 20
+      format: qcow2
+      full: true
+      memoryMiB: 4096
+      network:
+        default:
+          bridge: vmbr0
+          model: virtio
+      numCores: 2
+      numSockets: 1
+      sourceNode: proxmox
+      templateID: 102
+      checks:
+        skipCloudInitStatus: true
