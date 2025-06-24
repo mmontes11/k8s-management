@@ -24,9 +24,11 @@ TOKEN_PATH="$(pwd)/backups/token" \
 bash scripts/cluster.sh
 ```
 
+Credentials for the management cluster will be available at the `/etc/rancher/k3s/k3s.yaml` file.
+
 ### Bootstrap
 
-To install Cluster API and bootstrap a workload cluster, run:
+To install Cluster API and bootstrap a workload cluster, set the `GITHUB_TOKEN` environment variable and run:
 
 ```bash
 sudo \
@@ -36,11 +38,36 @@ GITHUB_BRANCH=main \
 GITHUB_PATH=clusters/management \
 GITHUB_TOKEN="$GITHUB_TOKEN" \
 bash scripts/bootstrap.sh
-``` 
+```
+
+### Configure access to the workload cluster
+
+To configure access to the workload cluster, set the `WORKLOAD_CLUSTER` environment variable and run:
+
+````bash
+WORKLOAD_CLUSTER="$WORKLOAD_CLUSTER" \
+bash scripts/workload-cluster-credentials.sh
+````
+
+Credentials will be available in the `kubeconfig` and `talosconfig` files in the current directory.
+
+### Bootstrap workload cluster
+
+To deploy the infrastructure components in the workload cluster, set the `GITHUB_TOKEN` environment variable and run run following script to bootstrap the [k8s-infrastructure](https://github.com/mmontes11/k8s-infrastructure) repository using flux:
+
+````bash
+sudo \
+GITHUB_USER=mmontes11 \
+GITHUB_REPO=k8s-management \ 
+GITHUB_BRANCH=main \
+GITHUB_PATH=clusters/management \
+GITHUB_TOKEN="$GITHUB_TOKEN" \
+./scripts/workload-cluster-bootstrap.sh
+````
 
 ### Upgrade
 
-To upgrade the cluster, set the `K3S_VERSION` environment variable to the desired version and run:
+To upgrade the management cluster, set the `K3S_VERSION` environment variable to the desired version and run:
 
 ```bash
 sudo \
@@ -67,6 +94,8 @@ bash scripts/restore.sh
 ```
 
 ### Uninstall
+
+To uninstall the k3s management cluster, run:
 
 ```bash
 k3s-uninstall.sh

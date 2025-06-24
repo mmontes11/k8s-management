@@ -1,2 +1,4 @@
 /backups
 /certs
+**/talosconfig
+**/kubeconfig
