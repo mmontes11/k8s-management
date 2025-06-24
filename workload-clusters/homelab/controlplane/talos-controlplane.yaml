@@ -8,14 +8,12 @@ spec:
   infrastructureTemplate:
     kind: ProxmoxMachineTemplate
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-    name: proxmox-controlplane
+    name: controlplane
     namespace: homelab
   controlPlaneConfig:
     controlplane:
       talosVersion: v1.10.4
       generateType: controlplane
-      hostname:
-        source: InfrastructureName
       strategicPatches:
         - |
           - op: replace

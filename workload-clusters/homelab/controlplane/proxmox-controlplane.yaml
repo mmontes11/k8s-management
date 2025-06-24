@@ -1,7 +1,7 @@
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxMachineTemplate
 metadata:
-  name: proxmox-controlplane
+  name: controlplane
 spec:
   template:
     spec:
