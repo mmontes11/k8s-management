@@ -1,3 +1,45 @@
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+kind: TalosControlPlane
+metadata:
+  name: controlplane
+spec:
+  version: v1.33.2
+  replicas: 1
+  infrastructureTemplate:
+    kind: ProxmoxMachineTemplate
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    name: controlplane
+    namespace: homelab
+  controlPlaneConfig:
+    controlplane:
+      talosVersion: v1.10.4
+      generateType: controlplane
+      strategicPatches:
+        - |
+          - op: add
+            path: /machine/install
+            value:
+              disk: /dev/sda
+              extensions:
+                - image: ghcr.io/siderolabs/qemu-guest-agent:10.0.2
+              extraKernelArgs:
+                - net.ifnames=0
+          - op: add
+            path: /machine/network
+            value:
+              hostname: controlplane
+              nameservers:
+                - 8.8.8.8
+                - 8.8.4.4
+              interfaces:
+                - interface: eth0
+                  dhcp: false
+                  addresses:
+                    - 10.0.0.12/24
+                  routes:
+                    - network: 0.0.0.0/0
+                      gateway: 10.0.0.1
+---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxMachineTemplate
 metadata:

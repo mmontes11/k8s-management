@@ -6,8 +6,30 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
     kind: TalosControlPlane
-    name: talos-controlplane
+    name: controlplane
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
     kind: ProxmoxCluster
-    name: proxmox-cluster
+    name: cluster
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxCluster
+metadata:
+  name: cluster
+spec:
+  allowedNodes:
+  - proxmox
+  controlPlaneEndpoint:
+    host: 10.0.0.12
+    port: 6443
+  dnsServers:
+  - 8.8.8.8
+  - 8.8.4.4
+  ipv4Config:
+    addresses:
+    - 10.0.0.40-10.0.0.49
+    gateway: 10.0.0.1
+    metric: 100
+    prefix: 24
+  schedulerHints:
+    memoryAdjustment: 0
