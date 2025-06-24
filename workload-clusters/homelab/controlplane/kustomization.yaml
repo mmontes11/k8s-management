@@ -3,6 +3,6 @@ kind: Kustomization
 namespace: homelab
 resources:
   - cluster.yaml
-  - controlplane.yaml
   - proxmox-cluster.yaml
+  - proxmox-controlplane.yaml
   - talos-controlplane.yaml
