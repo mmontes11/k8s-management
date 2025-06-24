@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         node.mmontes.io/name: compute-large
+    spec:
       version: v1.33.2
       clusterName: cluster
       strategy:
