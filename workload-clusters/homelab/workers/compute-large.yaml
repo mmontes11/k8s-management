@@ -1,0 +1,72 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: compute-large
+spec:
+  clusterName: cluster
+  replicas: 1
+  selector:
+    matchLabels:
+      node.mmontes.io/name: compute-large
+  template:
+    metadata:
+      labels:
+        node.mmontes.io/name: compute-large
+      version: v1.33.2
+      clusterName: cluster
+      strategy:
+        type: OnDelete
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+          kind: TalosConfigTemplate
+          name: config
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+        kind: ProxmoxMachineTemplate
+        name: compute-large
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: TalosConfigTemplate
+metadata:
+  name: config
+spec:
+  template:
+    spec:
+      talosVersion: v1.10.4
+      generateType: worker
+      strategicPatches:
+        - |
+          - op: add
+            path: /machine/install
+            value:
+              disk: /dev/sda
+              extensions:
+                - image: ghcr.io/siderolabs/qemu-guest-agent:10.0.2
+              extraKernelArgs:
+                - net.ifnames=0
+---          
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: compute-large
+spec:
+  template:
+    spec:
+      disks:
+        bootVolume:
+          disk: scsi0
+          sizeGb: 20
+      format: qcow2
+      full: true
+      memoryMiB: 12288 # 12Gi
+      network:
+        default:
+          bridge: vmbr0
+          model: virtio
+      numCores: 6
+      numSockets: 1
+      sourceNode: proxmox
+      templateID: 104
+      checks:
+        skipCloudInitStatus: true

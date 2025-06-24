@@ -11,3 +11,17 @@ spec:
   path: ./workload-clusters/homelab/controlplane
   prune: true
   timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: homelab-workers
+  namespace: flux-system
+spec:
+  interval: 1h
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./workload-clusters/homelab/workers
+  prune: true
+  timeout: 5m
