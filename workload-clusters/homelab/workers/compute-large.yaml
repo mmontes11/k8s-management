@@ -5,6 +5,8 @@ metadata:
 spec:
   clusterName: cluster
   replicas: 1
+  strategy:
+    type: OnDelete
   selector:
     matchLabels:
       node.mmontes.io/name: compute-large
@@ -13,10 +15,7 @@ spec:
       labels:
         node.mmontes.io/name: compute-large
     spec:
-      version: v1.33.2
       clusterName: cluster
-      strategy:
-        type: OnDelete
       bootstrap:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
