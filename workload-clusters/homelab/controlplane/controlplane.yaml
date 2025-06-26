@@ -62,6 +62,5 @@ spec:
       numSockets: 1
       sourceNode: proxmox
       templateID: 102
-      virtualMachineID: 103
       checks:
         skipCloudInitStatus: true
