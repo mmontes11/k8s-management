@@ -65,6 +65,11 @@ spec:
             value:
               node.mmontes.io/type: compute-large
           - op: add
-            path: /machine/nodeTaints
+            path: /machine/kubelet
             value:
-              node.mmontes.io/type: compute-large:NoSchedule
+              extraConfig:
+                registerNode: true
+                registerWithTaints:
+                  - effect: NoSchedule
+                    key: node.mmontes.io/type
+                    value: compute-large
