@@ -1,0 +1,24 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: compute-large
+spec:
+  template:
+    spec:
+      disks:
+        bootVolume:
+          disk: scsi0
+          sizeGb: 20
+      format: qcow2
+      full: true
+      memoryMiB: 12288 # 12Gi
+      network:
+        default:
+          bridge: vmbr0
+          model: virtio
+      numCores: 6
+      numSockets: 1
+      sourceNode: proxmox
+      templateID: 104
+      checks:
+        skipCloudInitStatus: true

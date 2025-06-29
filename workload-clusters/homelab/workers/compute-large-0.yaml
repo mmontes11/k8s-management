@@ -1,7 +1,7 @@
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
-  name: compute-large
+  name: compute-large-0
 spec:
   clusterName: cluster
   replicas: 1
@@ -9,18 +9,18 @@ spec:
     type: OnDelete
   selector:
     matchLabels:
-      node.mmontes.io/name: compute-large
+      node.mmontes.io/name: compute-large-0
   template:
     metadata:
       labels:
-        node.mmontes.io/name: compute-large
+        node.mmontes.io/name: compute-large-0
     spec:
       clusterName: cluster
       bootstrap:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
           kind: TalosConfigTemplate
-          name: config
+          name: compute-large-0
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
         kind: ProxmoxMachineTemplate
@@ -29,7 +29,7 @@ spec:
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: TalosConfigTemplate
 metadata:
-  name: config
+  name: compute-large-0
 spec:
   template:
     spec:
@@ -45,28 +45,26 @@ spec:
                 - image: ghcr.io/siderolabs/qemu-guest-agent:10.0.2
               extraKernelArgs:
                 - net.ifnames=0
----          
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-kind: ProxmoxMachineTemplate
-metadata:
-  name: compute-large
-spec:
-  template:
-    spec:
-      disks:
-        bootVolume:
-          disk: scsi0
-          sizeGb: 20
-      format: qcow2
-      full: true
-      memoryMiB: 12288 # 12Gi
-      network:
-        default:
-          bridge: vmbr0
-          model: virtio
-      numCores: 6
-      numSockets: 1
-      sourceNode: proxmox
-      templateID: 102
-      checks:
-        skipCloudInitStatus: true
+          - op: add
+            path: /machine/network
+            value:
+              hostname: compute-large-0
+              nameservers:
+                - 8.8.8.8
+                - 8.8.4.4
+              interfaces:
+                - interface: eth0
+                  dhcp: false
+                  addresses:
+                    - 10.0.0.26/24
+                  routes:
+                    - network: 0.0.0.0/0
+                      gateway: 10.0.0.1
+          - op: add
+            path: /machine/nodeLabels
+            value:
+              node.mmontes.io/type: compute-large
+          - op: add
+            path: /machine/nodeTaints
+            value:
+              node.mmontes.io/compute-large:NoSchedule
