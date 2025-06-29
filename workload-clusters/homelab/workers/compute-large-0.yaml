@@ -67,4 +67,4 @@ spec:
           - op: add
             path: /machine/nodeTaints
             value:
-              node.mmontes.io/compute-large: :NoSchedule
+              node.mmontes.io/type: compute-large:NoSchedule
