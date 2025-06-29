@@ -3,4 +3,5 @@ kind: Kustomization
 namespace: homelab
 resources:
   - compute-large-0.yaml
+  - compute-large-1.yaml
   - machine-templates.yaml
