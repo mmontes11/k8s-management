@@ -22,3 +22,28 @@ spec:
       templateID: 103
       checks:
         skipCloudInitStatus: true
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: compute-xlarge
+spec:
+  template:
+    spec:
+      disks:
+        bootVolume:
+          disk: scsi0
+          sizeGb: 20
+      format: qcow2
+      full: true
+      memoryMiB: 47104 # 46Gi
+      network:
+        default:
+          bridge: vmbr0
+          model: virtio
+      numCores: 8
+      numSockets: 1
+      sourceNode: proxmox
+      templateID: 108
+      checks:
+        skipCloudInitStatus: true
