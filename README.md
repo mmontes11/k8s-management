@@ -45,7 +45,12 @@ WORKLOAD_CLUSTER="$WORKLOAD_CLUSTER" \
 bash scripts/workload-cluster-credentials.sh
 ````
 
-Credentials will be available in the `kubeconfig` and `talosconfig` files in the current directory.
+Credentials will be available in the `kubeconfig` and `talosconfig` files in the current directory. Set the following aliases to temporarily use the workload cluster:
+
+```bash
+alias k="kubectl --kubeconfig=kubeconfig"
+alias t="talosctl --talosconfig=talosconfig"
+```
 
 ### Bootstrap workload cluster
 
