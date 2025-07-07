@@ -32,10 +32,6 @@ To install Cluster API and bootstrap a workload cluster, set the `GITHUB_TOKEN` 
 
 ```bash
 sudo \
-GITHUB_USER=mmontes11 \
-GITHUB_REPO=k8s-management \ 
-GITHUB_BRANCH=main \
-GITHUB_PATH=clusters/management \
 GITHUB_TOKEN="$GITHUB_TOKEN" \
 bash scripts/bootstrap.sh
 ```
