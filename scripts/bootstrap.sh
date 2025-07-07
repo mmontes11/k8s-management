@@ -12,9 +12,9 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 FLUX_VERSION=${FLUX_VERSION:-2.5.0}
 KUBECONFIG=${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}
+SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-sealed-secrets}
 
 # sealed secrets
-SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-sealed-secrets}
 kubectl create namespace "$SECRETS_NAMESPACE" \
   --dry-run=client -o yaml \
   | kubectl apply -f -
