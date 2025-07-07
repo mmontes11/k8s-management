@@ -12,7 +12,7 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 FLUX_VERSION=${FLUX_VERSION:-2.5.0}
 KUBECONFIG=${KUBECONFIG:-kubeconfig} 
-SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-sealed-secrets}
+SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-secrets}
 
 # sealed secrets
 kubectl create namespace "$SECRETS_NAMESPACE" \
