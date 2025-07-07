@@ -10,6 +10,8 @@ if [ -z "$GITHUB_TOKEN" ]; then
   echo "GITHUB_TOKEN environment variable must be provided"
   exit 1
 fi
+FLUX_VERSION=${FLUX_VERSION:-2.5.0}
+KUBECONFIG=${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}
 
 # sealed secrets
 SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-sealed-secrets}
@@ -29,9 +31,9 @@ kubectl label secret \
   --overwrite
 
 # flux
-curl -s https://fluxcd.io/install.sh | FLUX_VERSION=${FLUX_VERSION:-2.5.0} bash -s -
-KUBECONFIG=${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml} \
+curl -s https://fluxcd.io/install.sh | FLUX_VERSION=${FLUX_VERSION} bash -s -
 flux bootstrap github \
+  --kubeconfig=$KUBECONFIG \
   --owner=$GITHUB_USER \
   --repository=$GITHUB_REPO \
   --branch=$GITHUB_BRANCH \
