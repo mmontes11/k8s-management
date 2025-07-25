@@ -11,8 +11,9 @@ if [ -z "$GITHUB_TOKEN" ]; then
   exit 1
 fi
 FLUX_VERSION=${FLUX_VERSION:-2.5.0}
-KUBECONFIG=${KUBECONFIG:-kubeconfig} 
 SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-secrets}
+
+export KUBECONFIG=${KUBECONFIG:-kubeconfig}
 
 # certificate signing requests
 kubectl get csr \
@@ -25,7 +26,7 @@ kubectl apply -f \
   https://raw.githubusercontent.com/prometheus-community/helm-charts/kube-prometheus-stack-${PROMETHEUS_VERSION}/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
 
 # cilium
-CILIUM_VERSION="1.17.6"
+CILIUM_VERSION="1.16.1"
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 helm upgrade --install \
@@ -35,18 +36,13 @@ helm upgrade --install \
 
 # sealed secrets
 kubectl create namespace "$SECRETS_NAMESPACE" \
-  --kubeconfig=$KUBECONFIG \
-  --dry-run=client -o yaml \
-  | kubectl apply --kubeconfig=$KUBECONFIG -f -
+  --dry-run=client -o yaml | kubectl apply -f -
 kubectl create secret tls \
-  --kubeconfig=$KUBECONFIG \
   -n "$SECRETS_NAMESPACE" \
   sealed-secrets-key \
   --cert=certs/tls.crt --key=certs/tls.key \
-  --dry-run=client -o yaml \
-  | kubectl apply --kubeconfig=$KUBECONFIG -f -
+  --dry-run=client -o yaml | kubectl apply -f -
 kubectl label secret \
-  --kubeconfig=$KUBECONFIG \
   -n "$SECRETS_NAMESPACE" \
   sealed-secrets-key \
   sealedsecrets.bitnami.com/sealed-secrets-key=active \
@@ -55,10 +51,11 @@ kubectl label secret \
 # flux
 curl -s https://fluxcd.io/install.sh | FLUX_VERSION=${FLUX_VERSION} bash -s -
 flux bootstrap github \
-  --kubeconfig=$KUBECONFIG \
   --owner=$GITHUB_USER \
   --repository=$GITHUB_REPO \
   --branch=$GITHUB_BRANCH \
   --path=$GITHUB_PATH \
   --personal \
   --private=false
+
+unset KUBECONFIG
