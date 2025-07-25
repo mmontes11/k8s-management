@@ -1,0 +1,76 @@
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+  - effect: NoSchedule
+    key: node.kubernetes.io/not-ready
+  - effect: NoSchedule
+    key: node.mmontes.io/storage
+  - effect: NoSchedule
+    key: node.mmontes.io/type
+    value: compute-large
+  - effect: NoSchedule
+    key: node.mmontes.io/type
+    value: compute-xlarge
+hubble:
+  enabled: true
+  metrics:
+    enabled:
+      - dns:query
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - http
+    serviceMonitor:
+      enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+operator:
+  enabled: true
+  tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/control-plane
+    - effect: NoSchedule
+      key: node.kubernetes.io/not-ready
+    - effect: NoSchedule
+      key: node.mmontes.io/type
+      value: compute-large
+    - effect: NoSchedule
+      key: node.mmontes.io/type
+      value: compute-xlarge
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+ipam:
+  mode: kubernetes
+kubeProxyReplacement: false
+securityContext:
+  capabilities:
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup

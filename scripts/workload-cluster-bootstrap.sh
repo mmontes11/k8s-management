@@ -14,6 +14,25 @@ FLUX_VERSION=${FLUX_VERSION:-2.5.0}
 KUBECONFIG=${KUBECONFIG:-kubeconfig} 
 SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-secrets}
 
+# certificate signing requests
+kubectl get csr \
+  -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' \
+  | xargs -r kubectl certificate approve
+
+# prometheus crds (required by cilium)
+PROMETHEUS_VERSION="70.0.2"
+kubectl apply -f \
+  https://raw.githubusercontent.com/prometheus-community/helm-charts/kube-prometheus-stack-${PROMETHEUS_VERSION}/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
+
+# cilium
+CILIUM_VERSION="1.17.6"
+helm repo add cilium https://helm.cilium.io/
+helm repo update
+helm upgrade --install \
+  cilium cilium/cilium --version $CILIUM_VERSION \
+  -f config/cilium.yaml \
+  -n networking --create-namespace
+
 # sealed secrets
 kubectl create namespace "$SECRETS_NAMESPACE" \
   --kubeconfig=$KUBECONFIG \
@@ -35,10 +54,8 @@ kubectl label secret \
 
 # flux
 curl -s https://fluxcd.io/install.sh | FLUX_VERSION=${FLUX_VERSION} bash -s -
-# TODO: remove tolerations when worker nodes without taints are available
 flux bootstrap github \
   --kubeconfig=$KUBECONFIG \
-  --toleration-keys="node-role.kubernetes.io/control-plane" \
   --owner=$GITHUB_USER \
   --repository=$GITHUB_REPO \
   --branch=$GITHUB_BRANCH \
