@@ -60,9 +60,7 @@ spec:
                     - 10.0.0.29/24
                   routes:
                     - network: 0.0.0.0/0
-                      gateway: 10.0.0.1
-              cni:
-                name: none                      
+                      gateway: 10.0.0.1                   
           - op: add
             path: /machine/nodeLabels
             value:
@@ -76,3 +74,8 @@ spec:
                   - effect: NoSchedule
                     key: node.mmontes.io/type
                     value: compute-xlarge
+          - op: add
+            path: /cluster/network
+            value:
+              cni:
+                name: none
