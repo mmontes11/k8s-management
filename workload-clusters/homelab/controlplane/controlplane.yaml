@@ -44,6 +44,11 @@ spec:
             value:
               cni:
                 name: none
+          - op: add
+            path: /cluster/apiServer
+            value:
+              disablePodSecurityPolicy: true
+              admissionControl: []
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxMachineTemplate
