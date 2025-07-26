@@ -5,6 +5,8 @@ metadata:
 spec:
   version: v1.33.2
   replicas: 1
+  rolloutStrategy:
+    type: OnDelete
   infrastructureTemplate:
     kind: ProxmoxMachineTemplate
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
