@@ -14,7 +14,7 @@ spec:
     namespace: homelab
   controlPlaneConfig:
     controlplane:
-      talosVersion: v1.10.4
+      talosVersion: v1.10.5
       generateType: controlplane
       strategicPatches:
         - |
