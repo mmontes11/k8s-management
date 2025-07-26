@@ -64,7 +64,7 @@ spec:
           - op: add
             path: /machine/nodeLabels
             value:
-              node.mmontes.io/type: compute-large
+              node.mmontes.io/type: compute-tmp
           - op: add
             path: /cluster/network
             value:
