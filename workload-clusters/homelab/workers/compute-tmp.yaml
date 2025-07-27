@@ -41,9 +41,6 @@ spec:
             path: /machine/install
             value:
               disk: /dev/sda
-              extensions:
-                - image: ghcr.io/siderolabs/qemu-guest-agent:10.0.2
-                - image: ghcr.io/siderolabs/util-linux-tools:2.40.4
               extraKernelArgs:
                 - net.ifnames=0
           - op: add
