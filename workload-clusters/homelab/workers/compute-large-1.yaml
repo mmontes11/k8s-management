@@ -71,6 +71,8 @@ spec:
                   - effect: NoSchedule
                     key: node.mmontes.io/type
                     value: compute-large
+              extraArgs:
+                rotate-server-certificates: true
           - op: add
             path: /cluster/network
             value:

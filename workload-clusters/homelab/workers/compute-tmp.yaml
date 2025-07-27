@@ -63,6 +63,13 @@ spec:
             value:
               node.mmontes.io/type: compute-tmp
           - op: add
+            path: /machine/kubelet
+            value:
+              extraConfig:
+                registerNode: true
+              extraArgs:
+                rotate-server-certificates: true
+          - op: add
             path: /cluster/network
             value:
               cni:
