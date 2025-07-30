@@ -60,7 +60,12 @@ spec:
                     - 10.0.0.29/24
                   routes:
                     - network: 0.0.0.0/0
-                      gateway: 10.0.0.1                   
+                      gateway: 10.0.0.1
+          - op: add
+            path: /machine/kernel
+            value:
+              modules:
+                - name: dm-thin-pool                  
           - op: add
             path: /machine/nodeLabels
             value:

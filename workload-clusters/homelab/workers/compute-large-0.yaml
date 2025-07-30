@@ -59,6 +59,10 @@ spec:
                     - network: 0.0.0.0/0
                       gateway: 10.0.0.1
           - op: add
+            path: /machine/kernel
+            value:
+              modules:
+                - name: dm-thin-pool
             path: /machine/nodeLabels
             value:
               node.mmontes.io/type: compute-large
