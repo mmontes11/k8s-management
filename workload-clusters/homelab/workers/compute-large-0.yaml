@@ -63,6 +63,7 @@ spec:
             value:
               modules:
                 - name: dm-thin-pool
+          - op: add
             path: /machine/nodeLabels
             value:
               node.mmontes.io/type: compute-large
