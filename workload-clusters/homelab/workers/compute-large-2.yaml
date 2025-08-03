@@ -33,7 +33,7 @@ metadata:
 spec:
   template:
     spec:
-      talosVersion: v1.10.5
+      talosVersion: v1.10.6
       generateType: worker
       strategicPatches:
         - |
