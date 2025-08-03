@@ -36,14 +36,14 @@ spec:
           sizeGb: 20
       format: qcow2
       full: true
-      memoryMiB: 47104 # 46Gi
+      memoryMiB: 49152 # 48Gi
       network:
         default:
           bridge: vmbr0
           model: virtio
-      numCores: 8
+      numCores: 16
       numSockets: 1
       sourceNode: proxmox
-      templateID: 108
+      templateID: 110
       checks:
         skipCloudInitStatus: true
