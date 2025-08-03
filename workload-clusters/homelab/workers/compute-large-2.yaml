@@ -40,7 +40,7 @@ spec:
             path: /machine/install
             value:
               disk: /dev/sda
-              image: factory.talos.dev/metal-installer/88d1f7a5c4f1d3aba7df787c448c1d3d008ed29cfb34af53fa0df4336a56040:v1.10.6
+              image: factory.talos.dev/nocloud-installer/88d1f7a5c4f1d3aba7df787c448c1d3d008ed29cfb34af53fa0df4336a56040:v1.10.6
               extraKernelArgs:
                 - net.ifnames=0
           - op: add
