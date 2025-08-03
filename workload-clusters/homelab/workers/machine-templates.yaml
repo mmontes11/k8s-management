@@ -16,10 +16,10 @@ spec:
         default:
           bridge: vmbr0
           model: virtio
-      numCores: 6
+      numCores: 8
       numSockets: 1
       sourceNode: proxmox
-      templateID: 103
+      templateID: 111
       checks:
         skipCloudInitStatus: true
 ---
