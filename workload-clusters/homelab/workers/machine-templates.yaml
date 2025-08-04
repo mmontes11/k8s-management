@@ -19,7 +19,7 @@ spec:
       numCores: 8
       numSockets: 1
       sourceNode: proxmox
-      templateID: 111
+      templateID: 112
       checks:
         skipCloudInitStatus: true
 ---
