@@ -1,7 +1,7 @@
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
-  name: compute-xlarge-0
+  name: compute-xlarge
 spec:
   clusterName: cluster
   replicas: 1
@@ -9,18 +9,18 @@ spec:
     type: OnDelete
   selector:
     matchLabels:
-      node.mmontes.io/name: compute-xlarge-0
+      node.mmontes.io/name: compute-xlarge
   template:
     metadata:
       labels:
-        node.mmontes.io/name: compute-xlarge-0
+        node.mmontes.io/name: compute-xlarge
     spec:
       clusterName: cluster
       bootstrap:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
           kind: TalosConfigTemplate
-          name: compute-xlarge-0
+          name: compute-xlarge
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
         kind: ProxmoxMachineTemplate
@@ -29,7 +29,7 @@ spec:
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: TalosConfigTemplate
 metadata:
-  name: compute-xlarge-0
+  name: compute-xlarge
 spec:
   template:
     spec:
@@ -46,7 +46,7 @@ spec:
           - op: add
             path: /machine/network
             value:
-              hostname: compute-xlarge-0
+              hostname: compute-xlarge
               nameservers:
                 - 8.8.8.8
                 - 8.8.4.4

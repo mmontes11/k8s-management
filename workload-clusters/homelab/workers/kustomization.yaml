@@ -6,5 +6,5 @@ resources:
   - compute-large-1.yaml
   - compute-large-2.yaml
   - compute-tmp.yaml
-  # - compute-xlarge-0.yaml
+  - compute-xlarge.yaml
   - machine-templates.yaml
