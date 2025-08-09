@@ -59,6 +59,20 @@ spec:
                     - network: 0.0.0.0/0
                       gateway: 10.0.0.1
           - op: add
+            path: /machine/kubelet
+            value:
+              nodeIP:
+                validSubnets:
+                  - 10.0.0.26/32
+              extraConfig:
+                registerNode: true
+                registerWithTaints:
+                  - effect: NoSchedule
+                    key: node.mmontes.io/type
+                    value: compute-large
+              extraArgs:
+                rotate-server-certificates: true
+          - op: add
             path: /machine/kernel
             value:
               modules:
@@ -68,17 +82,6 @@ spec:
             path: /machine/nodeLabels
             value:
               node.mmontes.io/type: compute-large
-          - op: add
-            path: /machine/kubelet
-            value:
-              extraConfig:
-                registerNode: true
-                registerWithTaints:
-                  - effect: NoSchedule
-                    key: node.mmontes.io/type
-                    value: compute-large
-              extraArgs:
-                rotate-server-certificates: true
           - op: add
             path: /cluster/network
             value:

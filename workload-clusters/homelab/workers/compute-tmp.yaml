@@ -57,18 +57,21 @@ spec:
                     - 10.0.0.39/24
                   routes:
                     - network: 0.0.0.0/0
-                      gateway: 10.0.0.1                   
+                      gateway: 10.0.0.1
+          - op: add
+            path: /machine/kubelet
+            value:
+              nodeIP:
+                validSubnets:
+                  - 10.0.0.39/32    
+              extraConfig:
+                registerNode: true
+              extraArgs:
+                rotate-server-certificates: true           
           - op: add
             path: /machine/nodeLabels
             value:
               node.mmontes.io/type: compute-tmp
-          - op: add
-            path: /machine/kubelet
-            value:
-              extraConfig:
-                registerNode: true
-              extraArgs:
-                rotate-server-certificates: true
           - op: add
             path: /cluster/network
             value:

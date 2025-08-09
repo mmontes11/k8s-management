@@ -42,10 +42,13 @@ spec:
           - op: add
             path: /machine/kubelet
             value:
+              nodeIP:
+                validSubnets:
+                  - 10.0.0.12/32
               extraConfig:
                 registerNode: true
               extraArgs:
-                rotate-server-certificates: true    
+                rotate-server-certificates: true
           - op: add
             path: /cluster/network
             value:
