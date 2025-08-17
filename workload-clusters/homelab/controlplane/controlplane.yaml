@@ -3,7 +3,7 @@ kind: TalosControlPlane
 metadata:
   name: controlplane
 spec:
-  version: v1.33.2
+  version: v1.33.3
   replicas: 1
   rolloutStrategy:
     type: OnDelete
@@ -55,10 +55,22 @@ spec:
               cni:
                 name: none
           - op: add
-            path: /cluster/apiServer
+            path: /cluster
             value:
-              disablePodSecurityPolicy: true
-              admissionControl: []
+              apiServer:
+                disablePodSecurityPolicy: true
+                admissionControl: []
+              controllerManager:
+                extraArgs:
+                  bind-address: "0.0.0.0"
+                  secure-port: "10257"
+              scheduler:
+                extraArgs:
+                  bind-address: "0.0.0.0"
+                  secure-port: "10259"
+              proxy:
+                extraArgs:
+                  metrics-bind-address: "0.0.0.0:10249"
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxMachineTemplate
