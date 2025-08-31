@@ -29,7 +29,7 @@ if [ ! -d "$BACKUPS_DIR" ]; then
   mc alias set "$MINIO_ALIAS" "$MINIO_URL" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY" --insecure
 
   echo "🪣 Pulling backups from MinIO"
-  mc cp --recursive --insecure "$MINIO_ALIAS/$MINIO_BUCKET/$BACKUPS_DIR" "$BACKUPS_DIR"
+  mc cp --recursive --insecure "$MINIO_ALIAS/$MINIO_BUCKET/$BACKUPS_DIR" .
 fi
 
 echo "🛑 Stopping K3s..."
