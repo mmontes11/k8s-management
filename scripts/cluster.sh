@@ -9,16 +9,6 @@ ufw allow from 10.43.0.0/16 to any # Service CIDR
 
 K3S_VERSION=${K3S_VERSION:-"v1.33.1+k3s1"}
 
-if [ -n "${SNAPSHOT_PATH:-}" ] && [ -n "${TOKEN_PATH:-}" ]; then
-  echo "💾 Restoring snapshot $SNAPSHOT_PATH..."
-  curl -sfL https://get.k3s.io | \
-    INSTALL_K3S_VERSION="${K3S_VERSION}" \
-     sh -s - server \
-      --cluster-reset \
-      --cluster-reset-restore-path="$SNAPSHOT_PATH" \
-      --token="$(cat "$TOKEN_PATH")"
-fi
-
 echo "🚀 Starting K3s..."
 curl -sfL https://get.k3s.io | \
   INSTALL_K3S_VERSION="${K3S_VERSION}" \

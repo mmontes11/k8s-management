@@ -3,6 +3,8 @@ Bootstrap Kubernetes clusters with Cluster API, Talos and Proxmox.
 
 This repo sets up a [k3s](https://github.com/k3s-io/k3s) management cluster, installs [Cluster API](https://cluster-api.sigs.k8s.io/) and performs bootstrapping of [Talos](https://www.talos.dev/) workload clusters on top of [Proxmox](https://www.proxmox.com/) infrastructure.
 
+The workload cluster is bootstrapped by [Flux](https://fluxcd.io/) using the [k8s-infrastructure](https://github.com/mmontes11/) repository.
+
 __🚧 WIP 🚧__
 
 Inspired by this [blog post](https://a-cup-of.coffee/blog/talos-capi-proxmox/) from [@qjoly](https://github.com/qjoly/).
@@ -13,15 +15,6 @@ Install the k3s management cluster:
 
 ```bash
 sudo bash scripts/cluster.sh
-```
-
-To create the cluster from a snapshot, set the `SNAPSHOT_PATH` and `TOKEN_PATH` environment variables using absolute paths:
-
-```bash
-sudo \
-SNAPSHOT_PATH="$(pwd)/backups/on-demand-management-1749986019" \
-TOKEN_PATH="$(pwd)/backups/token" \
-bash scripts/cluster.sh
 ```
 
 Credentials for the management cluster will be available at the `/etc/rancher/k3s/k3s.yaml` file.
@@ -72,21 +65,26 @@ K3S_VERSION="v1.33.1+k3s1" \
 bash scripts/cluster.sh
 ```
 
-### Backup and restore
+### Backup
 
-To take an on-demand backup of the management cluster in the local `backups` directory, run:
-
-```bash
-sudo bash scripts/backup.sh
-```
-Alternatively, scheduled backups available in `/var/lib/rancher/k3s/server/db/snapshots` can be used.
-
-To restore a backup in a existing cluster, set the `SNAPSHOT_PATH` and `TOKEN_PATH` environment variables using absolute paths and run:
+To take an on-demand backup of the management cluster and push it to object storage, run:
 
 ```bash
 sudo \
-SNAPSHOT_PATH="$(pwd)/backups/on-demand-management-1749986019" \
-TOKEN_PATH="$(pwd)/backups/token" \
+MINIO_ACCESS_KEY="<access-key>" \
+MINIO_SECRET_KEY="<secret-key>" \
+bash scripts/backup.sh
+```
+
+### Restore
+
+To restore a backup in a existing cluster, select the backup to restore with `SNAPSHOT_NAME` and and run:
+
+```bash
+sudo \
+MINIO_ACCESS_KEY="<access-key>" \
+MINIO_SECRET_KEY="<secret-key>" \
+SNAPSHOT_NAME="on-demand-management-1749986019" \
 bash scripts/restore.sh
 ```
 
