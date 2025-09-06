@@ -5,10 +5,6 @@ This repo sets up a [k3s](https://github.com/k3s-io/k3s) management cluster, ins
 
 The workload cluster is bootstrapped by [Flux](https://fluxcd.io/) using the [k8s-infrastructure](https://github.com/mmontes11/k8s-infrastructure) repository.
 
-__🚧 WIP 🚧__
-
-Inspired by this [blog post](https://a-cup-of.coffee/blog/talos-capi-proxmox/) from [@qjoly](https://github.com/qjoly/).
-
 ### Install
 
 Install the k3s management cluster:
@@ -95,3 +91,18 @@ To uninstall the k3s management cluster, run:
 ```bash
 k3s-uninstall.sh
 ``` 
+
+### Reference
+
+- [Blog post](https://a-cup-of.coffee/blog/talos-capi-proxmox/) from [@qjoly](https://github.com/qjoly/).
+- [cluster-api-operator](https://doc.crds.dev/github.com/kubernetes-sigs/cluster-api-operator)
+- [cluster-api](https://doc.crds.dev/github.com/kubernetes-sigs/cluster-api)
+- [cluster-api-ipam-provider-in-cluster](https://doc.crds.dev/github.com/kubernetes-sigs/cluster-api-ipam-provider-in-cluster)
+- [cluster-api-provider-proxmox](https://doc.crds.dev/github.com/ionos-cloud/cluster-api-provider-proxmox)
+- [cluster-api-control-plane-provider-talos](https://doc.crds.dev/github.com/siderolabs/cluster-api-control-plane-provider-talos)
+- [cluster-api-bootstrap-provider-talos](https://doc.crds.dev/github.com/siderolabs/cluster-api-bootstrap-provider-talos)
+
+### Alternative installation flavours
+
+- [k8s-bootstrap](https://github.com/mmontes11/k8s-bootstrap): Kubeadm based installation.
+- [k8s-bootstrap-talos](https://github.com/mmontes11/k8s-bootstrap-talos): Talos based installation.
