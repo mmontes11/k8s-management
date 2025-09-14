@@ -3,7 +3,7 @@ kind: TalosControlPlane
 metadata:
   name: controlplane
 spec:
-  version: v1.33.3
+  version: v1.34.1
   replicas: 1
   rolloutStrategy:
     type: OnDelete
@@ -14,7 +14,6 @@ spec:
     namespace: homelab
   controlPlaneConfig:
     controlplane:
-      talosVersion: v1.10.5
       generateType: controlplane
       strategicPatches:
         - |
@@ -22,6 +21,7 @@ spec:
             path: /machine/install
             value:
               disk: /dev/sda
+              image: factory.talos.dev/nocloud-installer/aaafc937bd215b9f17980fe8ff2ea197f835e06c57aa46a01d3dc2e6e8f494d8:v1.11.1
               extraKernelArgs:
                 - net.ifnames=0
           - op: add
