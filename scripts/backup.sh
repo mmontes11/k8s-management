@@ -5,7 +5,7 @@ set -euo pipefail
 source ./scripts/lib.sh
 
 MINIO_ALIAS=${MINIO_ALIAS:-minio}
-MINIO_URL=${MINIO_URL:-https://10.0.0.90:443}
+MINIO_URL=${MINIO_URL:-https://minio.mmontes-internal.duckdns.org/}
 MINIO_BUCKET=${MINIO_BUCKET:-management}
 BACKUPS_DIR=${BACKUPS_DIR:-backups}
 
@@ -21,7 +21,7 @@ TOKEN_PATH="$SNAPSHOT_PATH/token"
 install_mc
 
 echo "🪣 Connecting to MinIO"
-mc alias set "$MINIO_ALIAS" "$MINIO_URL" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY" --insecure
+mc alias set "$MINIO_ALIAS" "$MINIO_URL" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
 
 mkdir -p "$SNAPSHOT_PATH"
 
@@ -34,4 +34,4 @@ cp /var/lib/rancher/k3s/server/token "$TOKEN_PATH"
 echo "✅ Backup completed: $SNAPSHOT_PATH, token saved to $TOKEN_PATH"
 
 echo "🪣 Pushing backup to MinIO"
-mc cp --recursive --insecure "$SNAPSHOT_PATH" "$MINIO_ALIAS/$MINIO_BUCKET/"
+mc cp --recursive "$SNAPSHOT_PATH" "$MINIO_ALIAS/$MINIO_BUCKET/"

@@ -5,9 +5,10 @@ set -euo pipefail
 source ./scripts/lib.sh
 
 MINIO_ALIAS=${MINIO_ALIAS:-minio}
-MINIO_URL=${MINIO_URL:-https://10.0.0.90:443}
+MINIO_URL=${MINIO_URL:-https://minio.mmontes-internal.duckdns.org/}
 MINIO_BUCKET=${MINIO_BUCKET:-management}
 BACKUPS_DIR=${BACKUPS_DIR:-backups}
+
 if [ -z "${SNAPSHOT_NAME:-}" ]; then
   echo "❌ SNAPSHOT_NAME environment variable is mandatory"
   exit 1
@@ -26,10 +27,10 @@ if [ ! -d "$BACKUPS_DIR" ]; then
   install_mc
 
   echo "🪣 Connecting to MinIO"
-  mc alias set "$MINIO_ALIAS" "$MINIO_URL" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY" --insecure
+  mc alias set "$MINIO_ALIAS" "$MINIO_URL" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
 
   echo "🪣 Pulling backups from MinIO"
-  mc cp --recursive --insecure "$MINIO_ALIAS/$MINIO_BUCKET/$BACKUPS_DIR" .
+  mc cp --recursive "$MINIO_ALIAS/$MINIO_BUCKET/$BACKUPS_DIR" .
 fi
 
 echo "🛑 Stopping K3s..."
