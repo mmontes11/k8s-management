@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prometheus-node-exporter
+spec:
+  chart:
+    spec:
+      chart: prometheus-node-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus
+        namespace: prometheus-node-exporter
+      version: "v1.18.0"
+  interval: 1h
+  values:
+    service:
+      enabled: true
+      type: NodePort
+      nodePort: 31910

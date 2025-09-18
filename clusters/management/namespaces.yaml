@@ -11,6 +11,11 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: prometheus-node-exporter
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: capi-operator-system
 ---
 apiVersion: v1
