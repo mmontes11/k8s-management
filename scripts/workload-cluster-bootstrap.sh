@@ -5,7 +5,7 @@ set -euo pipefail
 GITHUB_USER=${GITHUB_USER:-mmontes11}
 GITHUB_REPO=${GITHUB_REPO:-k8s-infrastructure}
 GITHUB_BRANCH=${GITHUB_BRANCH:-main}
-GITHUB_PATH=${GITHUB_PATH:-clusters/homelab-v2}
+GITHUB_PATH=${GITHUB_PATH:-clusters/homelab}
 if [ -z "$GITHUB_TOKEN" ]; then
   echo "GITHUB_TOKEN environment variable must be provided"
   exit 1
