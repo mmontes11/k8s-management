@@ -41,7 +41,7 @@ spec:
         default:
           bridge: vmbr0
           model: virtio
-      numCores: 16
+      numCores: 24
       numSockets: 1
       sourceNode: proxmox
       templateID: 113
