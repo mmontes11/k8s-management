@@ -61,6 +61,7 @@ spec:
           - op: add
             path: /machine/kubelet
             value:
+              image: ghcr.io/siderolabs/kubelet:v1.34.1
               nodeIP:
                 validSubnets:
                   - 10.0.0.28/32
