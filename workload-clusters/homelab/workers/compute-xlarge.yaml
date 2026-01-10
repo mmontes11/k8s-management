@@ -33,6 +33,7 @@ metadata:
 spec:
   template:
     spec:
+      talosVersion: v1.11 # required by talos bootstrap provider
       generateType: worker
       strategicPatches:
         - |
