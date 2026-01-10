@@ -15,7 +15,7 @@ spec:
   values:
     core:
       cluster-api:
-        version: v1.12.1
+        version: v1.10.4 # don't bump until the rest of the providers support the cluster-api version
         createNamespace: true
     bootstrap:
       talos:
