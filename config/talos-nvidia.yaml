@@ -1,0 +1,36 @@
+# Schematic Ready
+# Your image schematic ID is: 85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c
+# customization:
+#     systemExtensions:
+#         officialExtensions:
+#             - siderolabs/btrfs
+#             - siderolabs/iscsi-tools
+#             - siderolabs/nonfree-kmod-nvidia-lts
+#             - siderolabs/nvidia-container-toolkit-lts
+#             - siderolabs/qemu-guest-agent
+#             - siderolabs/util-linux-tools
+# First Boot
+# Here are the options for the initial boot of Talos Linux on Nocloud:
+
+# Disk Image
+# https://factory.talos.dev/image/85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c/v1.12.1/nocloud-amd64.raw.xz
+# ISO
+# https://factory.talos.dev/image/85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c/v1.12.1/nocloud-amd64.iso
+# PXE boot (iPXE script)
+# https://pxe.factory.talos.dev/pxe/85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c/v1.12.1/nocloud-amd64
+# Initial Installation
+# For the initial installation of Talos Linux (not applicable for disk image boot), add the following installer image to the machine configuration:
+# factory.talos.dev/nocloud-installer/85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c:v1.12.1
+
+# Upgrading Talos Linux
+# To upgrade Talos Linux on the machine, use the following image:
+# factory.talos.dev/nocloud-installer/85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c:v1.12.1
+customization:
+    systemExtensions:
+        officialExtensions:
+            - siderolabs/btrfs
+            - siderolabs/iscsi-tools
+            - siderolabs/nonfree-kmod-nvidia-lts
+            - siderolabs/nvidia-container-toolkit-lts
+            - siderolabs/qemu-guest-agent
+            - siderolabs/util-linux-tools
