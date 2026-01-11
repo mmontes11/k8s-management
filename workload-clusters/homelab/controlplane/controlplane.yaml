@@ -3,7 +3,7 @@ kind: TalosControlPlane
 metadata:
   name: controlplane
 spec:
-  version: v1.34.1
+  version: v1.35.0
   replicas: 1
   rolloutStrategy:
     type: OnDelete
@@ -43,7 +43,7 @@ spec:
           - op: add
             path: /machine/kubelet
             value:
-              image: ghcr.io/siderolabs/kubelet:v1.34.1
+              image: ghcr.io/siderolabs/kubelet:v1.35.0
               nodeIP:
                 validSubnets:
                   - 10.0.0.12/32
@@ -60,21 +60,21 @@ spec:
             path: /cluster
             value:
               apiServer:
-                image: registry.k8s.io/kube-apiserver:v1.34.1
+                image: registry.k8s.io/kube-apiserver:v1.35.0
                 disablePodSecurityPolicy: true
                 admissionControl: []
               controllerManager:
-                image: registry.k8s.io/kube-controller-manager:v1.34.1
+                image: registry.k8s.io/kube-controller-manager:v1.35.0
                 extraArgs:
                   bind-address: "0.0.0.0"
                   secure-port: "10257"
               scheduler:
-                image: registry.k8s.io/kube-scheduler:v1.34.1
+                image: registry.k8s.io/kube-scheduler:v1.35.0
                 extraArgs:
                   bind-address: "0.0.0.0"
                   secure-port: "10259"
               proxy:
-                image: registry.k8s.io/kube-proxy:v1.34.1
+                image: registry.k8s.io/kube-proxy:v1.35.0
                 extraArgs:
                   metrics-bind-address: "0.0.0.0:10249"
 ---
