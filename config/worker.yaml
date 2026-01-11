@@ -1,3 +1,11 @@
 machine:
   kubelet:
     image: ghcr.io/siderolabs/kubelet:v1.35.0
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+  sysctls:
+    net.core.bpf_jit_harden: 1
