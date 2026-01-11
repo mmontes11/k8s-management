@@ -14,7 +14,7 @@ spec:
     namespace: homelab
   controlPlaneConfig:
     controlplane:
-      talosVersion: v1.11 # required by talos bootstrap provider
+      talosVersion: v1.12 # required by talos bootstrap provider
       generateType: controlplane
       strategicPatches:
         - |
@@ -22,7 +22,7 @@ spec:
             path: /machine/install
             value:
               disk: /dev/sda
-              image: factory.talos.dev/nocloud-installer/aaafc937bd215b9f17980fe8ff2ea197f835e06c57aa46a01d3dc2e6e8f494d8:v1.11.1
+              image: factory.talos.dev/nocloud-installer/aaafc937bd215b9f17980fe8ff2ea197f835e06c57aa46a01d3dc2e6e8f494d8:v1.12.1
               extraKernelArgs:
                 - net.ifnames=0
           - op: add
