@@ -2,3 +2,4 @@
 /certs
 **/talosconfig
 **/kubeconfig
+machine.yaml

@@ -41,7 +41,7 @@ spec:
             path: /machine/install
             value:
               disk: /dev/sda
-              image: factory.talos.dev/nocloud-installer/85b464898a98f10956461b7b577337e0133f2a9e075bea12aad1d14f4bd53c3c:v1.12.1
+              image: factory.talos.dev/nocloud-installer/f65b143874f1172a6ae46613f8b223de5fd0fcd59f2fac85e49fd21ea183c097:v1.12.1
               extraKernelArgs:
                 - net.ifnames=0
           - op: add
@@ -92,6 +92,7 @@ spec:
             path: /machine/nodeLabels
             value:
               node.mmontes.io/type: compute-xlarge
+              nvidia.com/gpu.present: true
           - op: add
             path: /cluster/network
             value:
