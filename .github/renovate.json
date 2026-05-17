@@ -108,6 +108,39 @@
       "datasourceTemplate": "helm",
       "packageNameTemplate": "cluster-api-operator",
       "registryUrlTemplate": "https://kubernetes-sigs.github.io/cluster-api-operator"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/workload-clusters/.*/controlplane/controlplane\\.yaml$/"
+      ],
+      "matchStrings": [
+        "kind: TalosControlPlane[\\s\\S]+?version:\\s+(?<currentValue>v[0-9]+\\.[0-9]+\\.[0-9]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "kubernetes/kubernetes"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/workload-clusters/.*/controlplane/controlplane\\.yaml$/"
+      ],
+      "matchStrings": [
+        "kind: TalosControlPlane[\\s\\S]+?talosVersion:\\s+(?<currentValue>v[0-9]+\\.[0-9]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "siderolabs/talos"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/workload-clusters/.*/workers/.*\\.yaml$/"
+      ],
+      "matchStrings": [
+        "kind: TalosConfigTemplate[\\s\\S]+?talosVersion:\\s+(?<currentValue>v[0-9]+\\.[0-9]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "siderolabs/talos"
     }
   ],
   "packageRules": [
@@ -119,6 +152,24 @@
         "fluxcd/flux2"
       ],
       "groupName": "fluxcd/flux2"
+    },
+    {
+      "matchDatasources": [
+        "github-releases"
+      ],
+      "matchPackageNames": [
+        "kubernetes/kubernetes"
+      ],
+      "groupName": "Kubernetes"
+    },
+    {
+      "matchDatasources": [
+        "github-releases"
+      ],
+      "matchPackageNames": [
+        "siderolabs/talos"
+      ],
+      "groupName": "Talos"
     }
   ]
 }
