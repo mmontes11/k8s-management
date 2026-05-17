@@ -1,0 +1,124 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^scripts/bootstrap\\.sh$/"
+      ],
+      "matchStrings": [
+        "FLUX_VERSION=\\$\\{FLUX_VERSION:-(?<currentValue>[^}]+)\\}"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "fluxcd/flux2"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^scripts/cluster\\.sh$/"
+      ],
+      "matchStrings": [
+        "K3S_VERSION=\\$\\{K3S_VERSION:-\"?(?<currentValue>[^\"]+)\"?\\}"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "k3s-io/k3s"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^scripts/workload-cluster-bootstrap\\.sh$/"
+      ],
+      "matchStrings": [
+        "FLUX_VERSION=\\$\\{FLUX_VERSION:-(?<currentValue>[^}]+)\\}"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "fluxcd/flux2"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^scripts/workload-cluster-bootstrap\\.sh$/"
+      ],
+      "matchStrings": [
+        "PROMETHEUS_VERSION=\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "helm",
+      "packageNameTemplate": "kube-prometheus-stack",
+      "registryUrlTemplate": "https://prometheus-community.github.io/helm-charts"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^scripts/workload-cluster-bootstrap\\.sh$/"
+      ],
+      "matchStrings": [
+        "CILIUM_VERSION=\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "helm",
+      "packageNameTemplate": "cilium",
+      "registryUrlTemplate": "https://helm.cilium.io"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)infrastructure/cert-manager/cert-manager_helmrelease\\.yaml$/"
+      ],
+      "matchStrings": [
+        "chart:\\s+cert-manager\\s*\\n\\s+sourceRef:\\s*\\n\\s+kind:\\s+HelmRepository\\s*\\n\\s+name:\\s+cert-manager\\s*\\n\\s+(?:namespace:\\s+\\S+\\s*\\n)?\\s+version:\\s+\"?(?<currentValue>[^\"]+)\"?"
+      ],
+      "datasourceTemplate": "helm",
+      "packageNameTemplate": "cert-manager",
+      "registryUrlTemplate": "https://charts.jetstack.io"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)infrastructure/sealed-secrets/sealed-secrets_helmrelease\\.yaml$/"
+      ],
+      "matchStrings": [
+        "chart:\\s+sealed-secrets\\s*\\n\\s+sourceRef:\\s*\\n\\s+kind:\\s+HelmRepository\\s*\\n\\s+name:\\s+sealed-secrets\\s*\\n\\s+version:\\s+\"?(?<currentValue>[^\"]+)\"?"
+      ],
+      "datasourceTemplate": "helm",
+      "packageNameTemplate": "sealed-secrets",
+      "registryUrlTemplate": "https://bitnami-labs.github.io/sealed-secrets"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)infrastructure/prometheus-node-exporter/prometheus-node-exporter_helmrelease\\.yaml$/"
+      ],
+      "matchStrings": [
+        "chart:\\s+prometheus-node-exporter\\s*\\n\\s+sourceRef:\\s*\\n\\s+kind:\\s+HelmRepository\\s*\\n\\s+name:\\s+prometheus\\s*\\n\\s+version:\\s+\"?(?<currentValue>[^\"]+)\"?"
+      ],
+      "datasourceTemplate": "helm",
+      "packageNameTemplate": "prometheus-node-exporter",
+      "registryUrlTemplate": "https://prometheus-community.github.io/helm-charts"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)infrastructure/capi-operator-system/capi-operator_helmrelease\\.yaml$/"
+      ],
+      "matchStrings": [
+        "chart:\\s+cluster-api-operator\\s*\\n\\s+sourceRef:\\s*\\n\\s+kind:\\s+HelmRepository\\s*\\n\\s+name:\\s+capi-operator\\s*\\n\\s+version:\\s+(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "helm",
+      "packageNameTemplate": "cluster-api-operator",
+      "registryUrlTemplate": "https://kubernetes-sigs.github.io/cluster-api-operator"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "github-releases"
+      ],
+      "matchPackageNames": [
+        "fluxcd/flux2"
+      ],
+      "groupName": "fluxcd/flux2"
+    }
+  ]
+}
