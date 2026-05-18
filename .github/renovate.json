@@ -141,6 +141,15 @@
         "fluxcd/flux2"
       ],
       "groupName": "fluxcd/flux2"
+    },
+    {
+      "matchDatasources": [
+        "github-releases"
+      ],
+      "matchPackageNames": [
+        "siderolabs/talos"
+      ],
+      "groupName": "siderolabs/talos"
     }
   ]
 }
