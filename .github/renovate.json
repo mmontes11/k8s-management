@@ -152,24 +152,6 @@
         "fluxcd/flux2"
       ],
       "groupName": "fluxcd/flux2"
-    },
-    {
-      "matchDatasources": [
-        "github-releases"
-      ],
-      "matchPackageNames": [
-        "kubernetes/kubernetes"
-      ],
-      "groupName": "Kubernetes"
-    },
-    {
-      "matchDatasources": [
-        "github-releases"
-      ],
-      "matchPackageNames": [
-        "siderolabs/talos"
-      ],
-      "groupName": "Talos"
     }
   ]
 }
