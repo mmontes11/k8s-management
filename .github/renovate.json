@@ -115,17 +115,6 @@
         "/workload-clusters/.*/controlplane/controlplane\\.yaml$/"
       ],
       "matchStrings": [
-        "kind: TalosControlPlane[\\s\\S]+?version:\\s+(?<currentValue>v[0-9]+\\.[0-9]+\\.[0-9]+)"
-      ],
-      "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "kubernetes/kubernetes"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/workload-clusters/.*/controlplane/controlplane\\.yaml$/"
-      ],
-      "matchStrings": [
         "kind: TalosControlPlane[\\s\\S]+?talosVersion:\\s+(?<currentValue>v[0-9]+\\.[0-9]+)"
       ],
       "datasourceTemplate": "github-releases",
