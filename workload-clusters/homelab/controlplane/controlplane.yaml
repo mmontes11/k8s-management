@@ -3,7 +3,7 @@ kind: TalosControlPlane
 metadata:
   name: controlplane
 spec:
-  version: v1.35.0
+  version: v1.36.1
   replicas: 1
   rolloutStrategy:
     type: OnDelete
