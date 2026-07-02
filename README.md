@@ -72,8 +72,8 @@ To take an on-demand backup of the management cluster and push it to object stor
 
 ```bash
 sudo \
-MINIO_ACCESS_KEY="<access-key>" \
-MINIO_SECRET_KEY="<secret-key>" \
+S3_ACCESS_KEY="<access-key>" \
+S3_SECRET_KEY="<secret-key>" \
 bash scripts/backup.sh
 ```
 
@@ -83,8 +83,8 @@ To restore a backup in a existing cluster, select the backup to restore with `SN
 
 ```bash
 sudo \
-MINIO_ACCESS_KEY="<access-key>" \
-MINIO_SECRET_KEY="<secret-key>" \
+S3_ACCESS_KEY="<access-key>" \
+S3_SECRET_KEY="<secret-key>" \
 SNAPSHOT_NAME="on-demand-management-1749986019" \
 bash scripts/restore.sh
 ```
