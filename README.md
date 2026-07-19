@@ -5,10 +5,12 @@ This repo sets up a [k3s](https://github.com/k3s-io/k3s) management cluster, ins
 
 The workload cluster is bootstrapped by [Flux](https://fluxcd.io/) using the [k8s-infrastructure](https://github.com/mmontes11/k8s-infrastructure) repository.
 
-### Alternative installation flavours
+## Alternative installation flavours
 
 - [k8s-bootstrap](https://github.com/mmontes11/k8s-bootstrap): Kubeadm based installation.
 - [k8s-bootstrap-talos](https://github.com/mmontes11/k8s-bootstrap-talos): Talos based installation.
+
+## Management cluster
 
 ### Install
 
@@ -34,10 +36,10 @@ bash scripts/bootstrap.sh
 
 To configure access to the workload cluster, set the `WORKLOAD_CLUSTER` environment variable and run:
 
-````bash
+```bash
 WORKLOAD_CLUSTER="$WORKLOAD_CLUSTER" \
 bash scripts/workload-cluster-credentials.sh
-````
+```
 
 Credentials will be available in the `kubeconfig` and `talosconfig` files in the current directory. Set the following aliases to temporarily use the workload cluster:
 
@@ -48,13 +50,13 @@ alias t="talosctl --talosconfig=talosconfig"
 
 ### Bootstrap workload cluster
 
-To deploy the infrastructure components in the workload cluster, set the `GITHUB_TOKEN` environment variable and run run following script to bootstrap the [k8s-infrastructure](https://github.com/mmontes11/k8s-infrastructure) repository using flux:
+To deploy the infrastructure components in the workload cluster, set the `GITHUB_TOKEN` environment variable and run following script to bootstrap the [k8s-infrastructure](https://github.com/mmontes11/k8s-infrastructure) repository using flux:
 
-````bash
+```bash
 sudo \
 GITHUB_TOKEN="$GITHUB_TOKEN" \
 bash scripts/workload-cluster-bootstrap.sh
-````
+```
 
 ### Upgrade
 
@@ -95,7 +97,33 @@ To uninstall the k3s management cluster, run:
 
 ```bash
 k3s-uninstall.sh
-``` 
+```
+
+## Workload cluster
+
+### Template immutability
+
+`ProxmoxMachineTemplate` and `TalosConfigTemplate` resources are **entirely immutable**. Any change to their `spec` (disk size, RAM, CPU, strategic patches, etc.) will be rejected by the webhook:
+
+```
+ProxmoxMachineTemplate.infrastructure.cluster.x-k8s.io "compute-large" is invalid: spec: Forbidden: ProxmoxMachineTemplate is immutable
+```
+
+To update a template, use one of these approaches:
+
+**A) New name (safer, zero-downtime rollout):**
+1. Create a new template (e.g. `compute-large-v2`) with the updated spec
+2. Update the `infrastructureRef.name` (for `ProxmoxMachineTemplate`) and/or `bootstrap.configRef.name` (for `TalosConfigTemplate`) in the affected `MachineDeployment` resources
+3. CAPI will rollout new machines using the new template and delete the old ones
+4. Delete the old template after the rollout completes
+
+**B) Same name (simpler, brief reconciliation gap):**
+1. Delete the old template from Git
+2. Flux deletes it from the cluster
+3. Add the new template with the same name
+4. Flux creates it — no `MachineDeployment` changes needed
+
+Approach B works because `MachineDeployment` references templates by name, not UID. The reconciliation gap is brief (seconds to minutes) and the `MachineDeployment` will pick up the new template automatically.
 
 ### Reference
 
