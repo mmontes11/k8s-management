@@ -10,7 +10,7 @@ if [ -z "$GITHUB_TOKEN" ]; then
   echo "GITHUB_TOKEN environment variable must be provided"
   exit 1
 fi
-FLUX_VERSION=${FLUX_VERSION:-2.5.0}
+FLUX_VERSION=${FLUX_VERSION:-2.9.3}
 SECRETS_NAMESPACE=${SECRETS_NAMESPACE:-secrets}
 
 export KUBECONFIG=${KUBECONFIG:-kubeconfig}
