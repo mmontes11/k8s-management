@@ -98,3 +98,14 @@ spec:
             value:
               cni:
                 name: none
+        # OOM handler tuning (strategic-merge document, NOT an RFC6902 op):
+        # OOMConfig is a standalone Talos config document, so it is appended via
+        # apiVersion/kind rather than patched into the flat machine/cluster config.
+        # Bump the trigger threshold from the default 12.0 to 30.0: this node is
+        # intentionally over-committed (comfyui + opencode), and 12% memory PSI
+        # full is a hair-trigger that kills opencode-0 during normal workload
+        # hiccups. 30.0 still fires well before the kernel OOM-killer.
+        - |
+          apiVersion: v1alpha1
+          kind: OOMConfig
+          triggerExpression: 'memory_full_avg10 > 30.0 && d_memory_full_avg10 > 0.0 && time_since_trigger > duration("500ms")'
