@@ -1,0 +1,8 @@
+# Reverse of config/oom.yaml: a strategic-merge "delete selector" that removes the
+# OOMConfig document from the node's machine config, re-enabling the userspace OOM
+# controller (safe once Talos >= 1.12.2 has the fix).
+#
+#   talosctl --nodes 10.0.0.29 patch machineconfig --patch-file config/oom-remove.yaml
+apiVersion: v1alpha1
+kind: OOMConfig
+$patch: delete
