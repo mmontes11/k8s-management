@@ -1,0 +1,8 @@
+# This is a temporary workaround applied to compute-xlarge, as it has over-committed memory.
+# See: https://github.com/siderolabs/talos/issues/12526#issuecomment-3707193227
+# Fixed in talos 1.12.2, currently at 1.12.1
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"
+cgroupRankingExpression: "0.0"
+sampleInterval: "5s"
