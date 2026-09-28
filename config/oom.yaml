@@ -1,7 +1,6 @@
 # Temporary workaround for the Talos userspace OOM controller (OOMController) bug:
 # applied to compute-xlarge (10.0.0.29), which has over-committed memory, it disables
-# the userspace OOM killer so the controller stops killing workloads (kube-apiserver
-# among them).
+# the userspace OOM killer so the controller stops killing workloads.
 # See: https://github.com/siderolabs/talos/issues/12526#issuecomment-3707193227
 # Fixed in Talos 1.12.2 (we are migrating to 1.14.0, so this is only needed until then).
 #
