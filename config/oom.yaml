@@ -20,4 +20,4 @@
 # Tip: add --dry-run to either command to preview the change without applying it.
 apiVersion: v1alpha1
 kind: OOMConfig
-triggerExpression: 'memory_full_avg10 > 80.0 && d_memory_full_avg10 > 0.0 && time_since_trigger > duration("500ms")'
+triggerExpression: 'memory_full_avg10 > 12.0 && d_memory_full_avg10 > 0.0 && time_since_trigger > duration("500ms")'
