@@ -1,7 +1,10 @@
 # Temporary workaround for the Talos userspace OOM controller (OOMController) bug:
 # applied to compute-xlarge (10.0.0.29), which has over-committed memory, it disables
 # the userspace OOM killer so the controller stops killing workloads.
-# See: https://github.com/siderolabs/talos/issues/12526#issuecomment-3707193227
+# See: 
+# https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/system-configuration/oom
+# https://github.com/siderolabs/talos/issues/12526
+# https://github.com/mmontes11/k8s-management/pull/20
 # Fixed in Talos 1.12.2 (we are migrating to 1.14.0, so this is only needed until then).
 #
 # This file is the machine-config patch. Apply / remove it with talosctl, run from the
@@ -17,6 +20,4 @@
 # Tip: add --dry-run to either command to preview the change without applying it.
 apiVersion: v1alpha1
 kind: OOMConfig
-triggerExpression: "false"
-cgroupRankingExpression: "0.0"
-sampleInterval: "5s"
+triggerExpression: 'memory_full_avg10 > 30.0 && d_memory_full_avg10 > 0.0 && time_since_trigger > duration("500ms")'
