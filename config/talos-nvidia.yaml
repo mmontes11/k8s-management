@@ -1,18 +1,10 @@
-# First Boot
-# Here are the options for the initial boot of Talos Linux on Nocloud:
-#
-# Disk Image
-# https://factory.talos.dev/image/f65b143874f1172a6ae46613f8b223de5fd0fcd59f2fac85e49fd21ea183c097/v1.12.12/nocloud-amd64.raw.xz (checksums) (signature)
-# ISO
-# https://factory.talos.dev/image/f65b143874f1172a6ae46613f8b223de5fd0fcd59f2fac85e49fd21ea183c097/v1.12.12/nocloud-amd64.iso (checksums) (signature)
-# PXE boot (iPXE script)
-# https://pxe.factory.talos.dev/pxe/f65b143874f1172a6ae46613f8b223de5fd0fcd59f2fac85e49fd21ea183c097/v1.12.12/nocloud-amd64
-#
-# Upgrading Talos Linux
-#
-# To upgrade Talos Linux on the machine, use the following image:
-# factory.talos.dev/nocloud-installer/f65b143874f1172a6ae46613f8b223de5fd0fcd59f2fac85e49fd21ea183c097:v1.12.12
+# See: 
+# https://docs.siderolabs.com/talos/v1.14/platform-specific-installations/boot-assets
+# https://factory.talos.dev/
+# Schematic ID: 8da9288269158668418bcaff7eb8f7d1eb1829090021fbf6dba69b15e79811a8
 customization:
+    extraKernelArgs:
+      - net.ifnames=0
     systemExtensions:
         officialExtensions:
             - siderolabs/btrfs
