@@ -33,7 +33,7 @@ metadata:
 spec:
   template:
     spec:
-      talosVersion: v1.12 # required by talos bootstrap provider
+      talosVersion: v1.14 # required by talos bootstrap provider
       generateType: worker
       strategicPatches:
         - |
@@ -41,9 +41,8 @@ spec:
             path: /machine/install
             value:
               disk: /dev/sda
-              image: factory.talos.dev/nocloud-installer/f65b143874f1172a6ae46613f8b223de5fd0fcd59f2fac85e49fd21ea183c097:v1.12.1
-              extraKernelArgs:
-                - net.ifnames=0
+              image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
+              grubUseUKICmdline: true
           - op: add
             path: /machine/network
             value:
@@ -62,7 +61,7 @@ spec:
           - op: add
             path: /machine/kubelet
             value:
-              image: ghcr.io/siderolabs/kubelet:v1.35.0
+              image: ghcr.io/siderolabs/kubelet:v1.37.0
               nodeIP:
                 validSubnets:
                   - 10.0.0.29/32
