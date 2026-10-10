@@ -19,11 +19,11 @@ spec:
         createNamespace: true
     bootstrap:
       talos:
-        version: v0.6.11
+        version: v0.6.13
         createNamespace: true
     controlPlane:
       talos:
-        version: v0.5.12
+        version: v0.5.14
         createNamespace: true
     infrastructure:
       proxmox:
