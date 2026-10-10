@@ -3,7 +3,9 @@ kind: TalosControlPlane
 metadata:
   name: controlplane
 spec:
-  version: v1.37.0
+  # This is updated in place via talosctl. Updating this field leads to a drift with status, reulsting in the following error:
+  # "Scale up on hold because TalosControlPlane homelab/controlplane is upgrading (\"ControlPlaneIsStable\" preflight check failed
+  version: v1.33.2 # updated in place via talosctl.
   replicas: 1
   rolloutStrategy:
     type: OnDelete
