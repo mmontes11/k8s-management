@@ -37,15 +37,12 @@ spec:
       generateType: worker
       strategicPatches:
         - |
-          - op: add
-            path: /machine/install
-            value:
+          machine:
+            install:
               disk: /dev/sda
               image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
               grubUseUKICmdline: true
-          - op: add
-            path: /machine/network
-            value:
+            network:
               hostname: compute-xlarge
               nameservers:
                 - 8.8.8.8
@@ -58,9 +55,7 @@ spec:
                   routes:
                     - network: 0.0.0.0/0
                       gateway: 10.0.0.1
-          - op: add
-            path: /machine/kubelet
-            value:
+            kubelet:
               image: ghcr.io/siderolabs/kubelet:v1.37.0
               nodeIP:
                 validSubnets:
@@ -72,28 +67,21 @@ spec:
                     key: node.mmontes.io/type
                     value: compute-xlarge
               extraArgs:
-                rotate-server-certificates: true
-          - op: add
-            path: /machine/kernel
-            value:
+                rotate-server-certificates: "true"
+            kernel:
               modules:
-                - name: btrfs              
+                - name: btrfs
                 - name: dm-thin-pool
                 - name: nvidia
                 - name: nvidia_uvm
                 - name: nvidia_drm
                 - name: nvidia_modeset
-          - op: add
-            path: /machine/sysctls
-            value:
-              net.core.bpf_jit_harden: 1       
-          - op: add
-            path: /machine/nodeLabels
-            value:
+            sysctls:
+              net.core.bpf_jit_harden: "1"
+            nodeLabels:
               node.mmontes.io/type: compute-xlarge
-              nvidia.com/gpu.present: true
-          - op: add
-            path: /cluster/network
-            value:
+              nvidia.com/gpu.present: "true"
+          cluster:
+            network:
               cni:
                 name: none
