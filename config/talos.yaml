@@ -1,10 +1,10 @@
 # See: 
 # https://docs.siderolabs.com/talos/v1.14/platform-specific-installations/boot-assets
 # https://factory.talos.dev/
-# Schematic ID: aaafc937bd215b9f17980fe8ff2ea197f835e06c57aa46a01d3dc2e6e8f494d8
+# factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
 customization:
     extraKernelArgs:
-      - net.ifnames=0
+        - net.ifnames=0
     systemExtensions:
         officialExtensions:
             - siderolabs/btrfs
