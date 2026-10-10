@@ -41,7 +41,6 @@ spec:
             install:
               disk: /dev/sda
               image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
-              grubUseUKICmdline: true
             network:
               hostname: compute-xlarge
               nameservers:
