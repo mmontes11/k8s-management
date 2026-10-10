@@ -1,5 +1,5 @@
-- op: remove
-  path: /machine/install/extensions
+# - op: remove
+#   path: /machine/install/extensions
 - op: remove
   path: /machine/install/extraKernelArgs
 - op: add
