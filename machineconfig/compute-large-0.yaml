@@ -1,0 +1,41 @@
+machine:
+  install:
+    disk: /dev/sda
+    image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
+    grubUseUKICmdline: true
+  network:
+    hostname: compute-large-0
+    nameservers:
+      - 8.8.8.8
+      - 8.8.4.4
+    interfaces:
+      - interface: eth0
+        dhcp: false
+        addresses:
+          - 10.0.0.26/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 10.0.0.1
+  kernel:
+    modules:
+      - name: btrfs
+      - name: dm-thin-pool
+  nodeLabels:
+    node.mmontes.io/type: compute-large
+  kubelet:
+    image: ghcr.io/siderolabs/kubelet:v1.37.1
+    nodeIP:
+      validSubnets:
+        - 10.0.0.26/32
+    extraConfig:
+      registerNode: true
+      registerWithTaints:
+        - effect: NoSchedule
+          key: node.mmontes.io/type
+          value: compute-large
+    extraArgs:
+      rotate-server-certificates: true
+cluster:
+  network:
+    cni:
+      name: none

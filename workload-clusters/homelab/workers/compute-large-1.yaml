@@ -37,15 +37,12 @@ spec:
       generateType: worker
       strategicPatches:
         - |
-          - op: add
-            path: /machine/install
-            value:
+          machine:
+            install:
               disk: /dev/sda
               image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
               grubUseUKICmdline: true
-          - op: add
-            path: /machine/network
-            value:
+            network:
               hostname: compute-large-1
               nameservers:
                 - 8.8.8.8
@@ -58,10 +55,14 @@ spec:
                   routes:
                     - network: 0.0.0.0/0
                       gateway: 10.0.0.1
-          - op: add
-            path: /machine/kubelet
-            value:
-              image: ghcr.io/siderolabs/kubelet:v1.37.0
+            kernel:
+              modules:
+                - name: btrfs
+                - name: dm-thin-pool
+            nodeLabels:
+              node.mmontes.io/type: compute-large
+            kubelet:
+              image: ghcr.io/siderolabs/kubelet:v1.37.1
               nodeIP:
                 validSubnets:
                   - 10.0.0.27/32
@@ -73,18 +74,7 @@ spec:
                     value: compute-large
               extraArgs:
                 rotate-server-certificates: true
-          - op: add
-            path: /machine/kernel
-            value:
-              modules:
-                - name: btrfs
-                - name: dm-thin-pool
-          - op: add
-            path: /machine/nodeLabels
-            value:
-              node.mmontes.io/type: compute-large
-          - op: add
-            path: /cluster/network
-            value:
+          cluster:
+            network:
               cni:
                 name: none
