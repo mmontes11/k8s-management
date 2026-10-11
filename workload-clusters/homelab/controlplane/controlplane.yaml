@@ -5,7 +5,7 @@ metadata:
 spec:
   # This is updated in place via talosctl. Updating this field leads to a drift with status, resulting in the following error:
   # "Scale up on hold because TalosControlPlane homelab/controlplane is upgrading (\"ControlPlaneIsStable\" preflight check failed"
-  version: v1.33.2 # updated in place via talosctl.
+  version: v1.33.2
   replicas: 1
   rolloutStrategy:
     type: OnDelete
@@ -20,15 +20,12 @@ spec:
       generateType: controlplane
       strategicPatches:
         - |
-          - op: add
-            path: /machine/install
-            value:
+          machine:
+            install:
               disk: /dev/sda
               image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
               grubUseUKICmdline: true
-          - op: add
-            path: /machine/network
-            value:
+            network:
               hostname: controlplane
               nameservers:
                 - 8.8.8.8
@@ -41,10 +38,8 @@ spec:
                   routes:
                     - network: 0.0.0.0/0
                       gateway: 10.0.0.1
-          - op: add
-            path: /machine/kubelet
-            value:
-              image: ghcr.io/siderolabs/kubelet:v1.37.0
+            kubelet:
+              image: ghcr.io/siderolabs/kubelet:v1.37.1
               nodeIP:
                 validSubnets:
                   - 10.0.0.12/32
@@ -52,32 +47,28 @@ spec:
                 registerNode: true
               extraArgs:
                 rotate-server-certificates: true
-          - op: add
-            path: /cluster/network
-            value:
+          cluster:
+            network:
               cni:
                 name: none
-          - op: add
-            path: /cluster
-            value:
-              apiServer:
-                image: registry.k8s.io/kube-apiserver:v1.37.0
-                disablePodSecurityPolicy: true
-                admissionControl: []
-              controllerManager:
-                image: registry.k8s.io/kube-controller-manager:v1.37.0
-                extraArgs:
-                  bind-address: "0.0.0.0"
-                  secure-port: "10257"
-              scheduler:
-                image: registry.k8s.io/kube-scheduler:v1.37.0
-                extraArgs:
-                  bind-address: "0.0.0.0"
-                  secure-port: "10259"
-              proxy:
-                image: registry.k8s.io/kube-proxy:v1.37.0
-                extraArgs:
-                  metrics-bind-address: "0.0.0.0:10249"
+            apiServer:
+              image: registry.k8s.io/kube-apiserver:v1.37.1
+              disablePodSecurityPolicy: true
+              admissionControl: []
+            controllerManager:
+              image: registry.k8s.io/kube-controller-manager:v1.37.1
+              extraArgs:
+                bind-address: "0.0.0.0"
+                secure-port: "10257"
+            scheduler:
+              image: registry.k8s.io/kube-scheduler:v1.37.1
+              extraArgs:
+                bind-address: "0.0.0.0"
+                secure-port: "10259"
+            proxy:
+              image: registry.k8s.io/kube-proxy:v1.37.1
+              extraArgs:
+                metrics-bind-address: "0.0.0.0:10249"
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxMachineTemplate

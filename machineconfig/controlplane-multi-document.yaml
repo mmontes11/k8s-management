@@ -1,0 +1,75 @@
+# See: 
+# https://docs.siderolabs.com/talos/v1.14/getting-started/what's-new-in-talos#machine-configuration
+# https://docs.siderolabs.com/talos/v1.14/reference/configuration/overview
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/sda"
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: controlplane
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+  - address: 8.8.8.8
+  - address: 8.8.4.4
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: eth0
+addresses:
+  - address: 10.0.0.12/24
+routes:
+  - gateway: 10.0.0.1
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+image: ghcr.io/siderolabs/kubelet:v1.37.1
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+nodeIP:
+  validSubnets:
+    - 10.0.0.12/32
+labels:
+  node-role.kubernetes.io/control-plane: ""
+taints:
+  node-role.kubernetes.io/control-plane: ":NoSchedule"
+---
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeAdmissionControlConfig
+name: PodSecurity
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeAPIServerConfig
+image: registry.k8s.io/kube-apiserver:v1.37.1
+---
+apiVersion: v1alpha1
+kind: KubeControllerManagerConfig
+image: registry.k8s.io/kube-controller-manager:v1.37.1
+extraArgs:
+  bind-address: "0.0.0.0"
+  secure-port: "10257"
+---
+apiVersion: v1alpha1
+kind: KubeSchedulerConfig
+image: registry.k8s.io/kube-scheduler:v1.37.1
+extraArgs:
+  bind-address: "0.0.0.0"
+  secure-port: "10259"
+---
+apiVersion: v1alpha1
+kind: KubeProxyConfig
+image: registry.k8s.io/kube-proxy:v1.37.1
+config:
+  metricsBindAddress: 0.0.0.0:10249

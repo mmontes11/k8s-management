@@ -1,0 +1,49 @@
+machine:
+  install:
+    disk: /dev/sda
+    image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
+    grubUseUKICmdline: true
+  network:
+    hostname: controlplane
+    nameservers:
+      - 8.8.8.8
+      - 8.8.4.4
+    interfaces:
+      - interface: eth0
+        dhcp: false
+        addresses:
+          - 10.0.0.12/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 10.0.0.1
+  kubelet:
+    image: ghcr.io/siderolabs/kubelet:v1.37.1
+    nodeIP:
+      validSubnets:
+        - 10.0.0.12/32
+    extraConfig:
+      registerNode: true
+    extraArgs:
+      rotate-server-certificates: true
+cluster:
+  network:
+    cni:
+      name: none
+  apiServer:
+    image: registry.k8s.io/kube-apiserver:v1.37.1
+    disablePodSecurityPolicy: true
+    admissionControl: []
+  controllerManager:
+    image: registry.k8s.io/kube-controller-manager:v1.37.1
+    extraArgs:
+      bind-address: "0.0.0.0"
+      secure-port: "10257"
+  scheduler:
+    image: registry.k8s.io/kube-scheduler:v1.37.1
+    extraArgs:
+      bind-address: "0.0.0.0"
+      secure-port: "10259"
+  proxy:
+    image: registry.k8s.io/kube-proxy:v1.37.1
+    extraArgs:
+      metrics-bind-address: "0.0.0.0:10249"
