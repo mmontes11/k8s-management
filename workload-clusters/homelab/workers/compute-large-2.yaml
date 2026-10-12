@@ -37,44 +37,60 @@ spec:
       generateType: worker
       strategicPatches:
         - |
-          machine:
-            install:
-              disk: /dev/sda
-              image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
-              grubUseUKICmdline: true
-            network:
-              hostname: compute-large-2
-              nameservers:
-                - 8.8.8.8
-                - 8.8.4.4
-              interfaces:
-                - interface: eth0
-                  dhcp: false
-                  addresses:
-                    - 10.0.0.28/24
-                  routes:
-                    - network: 0.0.0.0/0
-                      gateway: 10.0.0.1
-            kernel:
-              modules:
-                - name: btrfs
-                - name: dm-thin-pool
-            nodeLabels:
-              node.mmontes.io/type: compute-large
-            kubelet:
-              image: ghcr.io/siderolabs/kubelet:v1.37.1
-              nodeIP:
-                validSubnets:
-                  - 10.0.0.28/32
-              extraConfig:
-                registerNode: true
-                registerWithTaints:
-                  - effect: NoSchedule
-                    key: node.mmontes.io/type
-                    value: compute-large
-              extraArgs:
-                rotate-server-certificates: true
-          cluster:
-            network:
-              cni:
-                name: none
+          apiVersion: v1alpha1
+          kind: UnattendedInstallConfig
+          installer:
+            image: factory.talos.dev/nocloud-installer/3ed15c02833947ae0444f22e5225c772346e48feb70cb508d0b36c175eddd624:v1.14.2
+          provisioning:
+            diskSelector:
+              match: disk.dev_path == "/dev/sda"
+          ---
+          apiVersion: v1alpha1
+          kind: HostnameConfig
+          auto: off
+          hostname: compute-large-2
+          ---
+          apiVersion: v1alpha1
+          kind: ResolverConfig
+          nameservers:
+            - address: 8.8.8.8
+            - address: 8.8.4.4
+          ---
+          apiVersion: v1alpha1
+          kind: LinkConfig
+          name: eth0
+          addresses:
+            - address: 10.0.0.28/24
+          routes:
+            - gateway: 10.0.0.1
+          ---
+          apiVersion: v1alpha1
+          kind: KernelModuleConfig
+          name: btrfs
+          ---
+          apiVersion: v1alpha1
+          kind: KernelModuleConfig
+          name: dm-thin-pool
+          ---
+          apiVersion: v1alpha1
+          kind: KubeNodeConfig
+          nodeIP:
+            validSubnets:
+              - 10.0.0.28/32
+          labels:
+            node.mmontes.io/type: compute-large
+          ---
+          apiVersion: v1alpha1
+          kind: KubeletConfig
+          image: ghcr.io/siderolabs/kubelet:v1.37.1
+          config:
+            registerNode: true
+            serverTLSBootstrap: true
+            registerWithTaints:
+              - effect: NoSchedule
+                key: node.mmontes.io/type
+                value: compute-large
+          ---
+          apiVersion: v1alpha1
+          kind: KubeFlannelCNIConfig
+          $patch: delete
