@@ -89,11 +89,6 @@ spec:
           name: nvidia_modeset
           ---
           apiVersion: v1alpha1
-          kind: SysctlConfig
-          params:
-            net.core.bpf_jit_harden: "1"
-          ---
-          apiVersion: v1alpha1
           kind: KubeNodeConfig
           nodeIP:
             validSubnets:

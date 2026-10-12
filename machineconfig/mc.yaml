@@ -20,3 +20,22 @@
   path: /cluster/scheduler
 - op: remove
   path: /cluster/proxy
+- op: replace
+  path: /machine/kubelet/extraConfig/registerWithTaints
+  value:
+    - effect: NoSchedule
+      key: node.mmontes.io/type
+      value: compute-large
+- op: replace
+  path: /machine/network/interfaces/0/routes
+  value:
+    - network: 0.0.0.0/0
+      gateway: 10.0.0.1
+- op: replace
+  path: /machine/network/nameservers
+  value: [8.8.8.8, 8.8.4.4]
+- op: replace
+  path: /machine/kernel/modules
+  value:
+    - name: btrfs
+    - name: dm-thin-pool
