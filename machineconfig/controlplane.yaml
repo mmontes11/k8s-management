@@ -1,23 +1,3 @@
-version: v1alpha1
-machine:
-  install:
-    $patch: delete
-  network:
-    $patch: delete
-  kubelet:
-    $patch: delete
-cluster:
-  network:
-    $patch: delete
-  apiServer:
-    $patch: delete
-  controllerManager:
-    $patch: delete
-  scheduler:
-    $patch: delete
-  proxy:
-    $patch: delete
----
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
