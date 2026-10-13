@@ -37,22 +37,6 @@ spec:
       generateType: worker
       strategicPatches:
         - |
-          version: v1alpha1
-          machine:
-            install:
-              $patch: delete
-            network:
-              $patch: delete
-            kernel:
-              $patch: delete
-            nodeLabels:
-              $patch: delete
-            kubelet:
-              $patch: delete
-          cluster:
-            network:
-              $patch: delete
-          ---
           apiVersion: v1alpha1
           kind: UnattendedInstallConfig
           installer:
