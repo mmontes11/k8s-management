@@ -31,9 +31,6 @@ spec:
             kubelet:
               $patch: delete
           cluster:
-            network:
-              cni:
-                $patch: delete
             apiServer:
               $patch: delete
             controllerManager:
