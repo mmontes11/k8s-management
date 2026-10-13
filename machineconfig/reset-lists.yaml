@@ -1,0 +1,17 @@
+# avoid duplicate array fields when patching
+apiVersion: v1alpha1
+kind: ResolverConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: eth0
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+$patch: delete
