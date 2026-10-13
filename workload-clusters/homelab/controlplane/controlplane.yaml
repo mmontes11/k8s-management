@@ -20,17 +20,20 @@ spec:
       generateType: controlplane
       strategicPatches:
         - |
-          version: v1alpha1
           machine:
             install:
               $patch: delete
+            features:
+              stableHostname:
+                $patch: delete
             network:
               $patch: delete
             kubelet:
               $patch: delete
           cluster:
             network:
-              $patch: delete
+              cni:
+                $patch: delete
             apiServer:
               $patch: delete
             controllerManager:
