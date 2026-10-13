@@ -48,7 +48,7 @@ spec:
           apiVersion: v1alpha1
           kind: HostnameConfig
           auto: off
-          hostname: compute-large-1
+          hostname: compute-large-2
           ---
           apiVersion: v1alpha1
           kind: ResolverConfig
@@ -60,7 +60,7 @@ spec:
           kind: LinkConfig
           name: eth0
           addresses:
-            - address: 10.0.0.27/24
+            - address: 10.0.0.28/24
           routes:
             - gateway: 10.0.0.1
           ---
@@ -76,7 +76,7 @@ spec:
           kind: KubeNodeConfig
           nodeIP:
             validSubnets:
-              - 10.0.0.27/32
+              - 10.0.0.28/32
           labels:
             node.mmontes.io/type: compute-large
           ---
@@ -94,3 +94,4 @@ spec:
           apiVersion: v1alpha1
           kind: KubeFlannelCNIConfig
           $patch: delete
+
