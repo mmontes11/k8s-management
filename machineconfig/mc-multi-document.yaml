@@ -1,0 +1,38 @@
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: eth0
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: btrfs
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: dm-thin-pool
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete
