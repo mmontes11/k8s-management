@@ -125,6 +125,85 @@ To update a template, use one of these approaches:
 
 Approach B works because `MachineDeployment` references templates by name, not UID. The reconciliation gap is brief (seconds to minutes) and the `MachineDeployment` will pick up the new template automatically.
 
+### Runbooks
+
+#### Adopt a manually restored control-plane VM into Cluster API
+
+Use this when a control-plane VM has been recreated by hand (for example, restored from a Proxmox backup) and is no longer part of Cluster API state, so the `TalosControlPlane` has started provisioning a replacement machine. The goal is to make CAPI track the restored VM instead of the replacement, stop further provisioning, and keep the node operable manually with `talosctl`.
+
+Repointing the existing `ProxmoxMachine` is preferred over creating a brand-new `Machine` by hand: it avoids a race in which the `TalosControlPlane` recreates a machine when the owned count momentarily drops to zero, avoids hand-wiring an `ownerReference` onto a controller-owned object, and lets the normal controllers keep the state consistent.
+
+**How the Proxmox provider adopts an existing VM**
+
+The `ProxmoxMachine` controller resolves which VM it owns in `FindVM`:
+
+- It reads the VMID from `spec.virtualMachineID` and the hypervisor from `status.proxmoxNode`, then looks the VM up **by ID** — it never clones when a VMID is set.
+- It then requires the VM's Proxmox `name` to **exactly equal the `ProxmoxMachine` object name**. On a mismatch it treats the VM as "not initialized" and requeues — it does not clone or destroy anything.
+- Once the VM is found and the machine is already in its terminal (provisioned) state, the create/clone, static-IP, bootstrap and power steps are each gated by the `VMProvisioned` condition reason and are skipped. The controller only re-points `status.providerID` to the VM's real SMBIOS UUID and marks the machine ready.
+
+So adoption is two manual inputs — point `spec.virtualMachineID` at the restored VMID, and make the Proxmox VM `name` match the `ProxmoxMachine` name — and the CAPI `Machine` controller then links the Kubernetes node automatically via `providerID` matching.
+
+**Prerequisites**
+
+- `kubectl` configured against the management cluster (where `TalosControlPlane` / `Machine` / `ProxmoxMachine` live — namespace `homelab` here).
+- `qm` access on the Proxmox hypervisor.
+- Identify the objects:
+  - Restored VM — VMID `104`, Proxmox name `controlplane-6ck8t`, SMBIOS UUID `8199db4d-969f-47a7-a9e6-81e39565bca0`, MAC `BC:24:11:7C:FB:AA`, IP `10.0.0.40`, hypervisor `proxmox`.
+  - CAPI objects — `Machine/controlplane-tjvrx` and `ProxmoxMachine/controlplane-758h2` (ns `homelab`).
+  - The replacement VM that the provider cloned (here at `10.0.0.45`) — this is the one you will destroy.
+- Confirm the restored node is a healthy control-plane member before starting:
+  - `talosctl -n 10.0.0.40 --nodes 10.0.0.40 version`
+  - `kubectl get nodes`
+- **Back up the management cluster first** (see Backup/Restore above) before any surgery.
+
+**Steps**
+
+1. Rename the restored VM's Proxmox `name` to match the `ProxmoxMachine` object name. This only changes the VM label — VMID, disks and data are untouched.
+
+   ```bash
+   qm set 104 name controlplane-758h2
+   qm config 104 | grep -E 'name|smbios1|macaddr'   # sanity check
+   ```
+
+2. Repoint the `ProxmoxMachine` at VM `104`. Do **not** delete the `ProxmoxMachine` — repointing keeps the `Machine`, its `ownerReference` to the `TalosControlPlane`, and its terminal provisioned state intact.
+
+   ```bash
+   kubectl patch proxmoxmachine/controlplane-758h2 -n homelab --type merge \
+     -p '{"spec":{"virtualMachineID":104}}'
+   ```
+
+3. Wait ~30-60s for the controllers to reconcile, then verify:
+   - `kubectl get proxmoxmachine/controlplane-758h2 -n homelab -o yaml` → `status.vmStatus: running`, `status.providerID: proxmox://8199db4d-969f-47a7-a9e6-81e39565bca0`, `VMProvisioned` ready.
+   - `kubectl get machine/controlplane-tjvrx -n homelab -o yaml` → `status.nodeRef` now points to the real control-plane node (matched by `providerID`), `status.addresses` InternalIP `10.0.0.40`, `status.ready: true`, and the v1beta2 `NodeHealthy` / `NodeReady` conditions are `True`.
+   - `kubectl get taloscontrolplane/controlplane -n homelab` → `Resized` `1/1`, no scaling.
+
+4. Destroy the redundant replacement VM (the cloned one at `10.0.0.45`). Find its VMID — it is **not** `104` — and confirm before destroying:
+
+   ```bash
+   qm status <vmid>    # confirm this is the freshly cloned VM, not 104
+   qm destroy <vmid>
+   ```
+
+   ⚠️ Double-check the VMID. Destroying VM `104` would take down the real control plane.
+
+5. Optional — if a pool `IPAddress` object for `10.0.0.45` still exists for this machine, release it to free the IPAM pool slot.
+
+**Verification**
+
+- `talosctl -n 10.0.0.40 --nodes 10.0.0.40 ...` works and the node is the control-plane member.
+- `kubectl get machines -n homelab` shows the single control-plane machine `Ready`; watch for a few reconcile cycles to confirm no new machine appears.
+- `kubectl get proxmoxmachine/controlplane-758h2 -n homelab` is stable at VMID `104` (not re-cloning).
+
+**Rollback**
+
+Set `spec.virtualMachineID` back to the replacement VMID and rename VM `104`'s Proxmox `name` back to `controlplane-6ck8t`. Keep the replacement VM around until the adoption is verified stable, so this rollback is available.
+
+**Caveats**
+
+- The `TalosControlPlane` counts owned machines (label `cluster.x-k8s.io/control-plane` + ownerReference) against `spec.replicas`. With one adopted machine and `replicas: 1` it is scale-stable and will not create another.
+- This only works when the `ProxmoxMachine` is already in its terminal (provisioned) state. If it is still mid-provisioning (reason `Cloning` / `WaitingFor…`), repointing can re-trigger provisioning steps — only adopt an already-provisioned machine.
+- Manual upgrades via `talosctl` are unaffected. To return to fully CAPI-managed control planes later, delete the adopted machine's objects and let the `TalosControlPlane` provision fresh.
+
 ### Reference
 
 - [Blog post](https://a-cup-of.coffee/blog/talos-capi-proxmox/) from [@qjoly](https://github.com/qjoly/).
