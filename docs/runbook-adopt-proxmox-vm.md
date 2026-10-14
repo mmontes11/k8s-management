@@ -81,7 +81,7 @@ The two changes above are exactly what the adoption path requires. Each claim ma
 1. Rename the restored VM's Proxmox `name` to match the `ProxmoxMachine` object name. This only changes the VM label — VMID, disks and data are untouched.
 
    ```bash
-   qm set 104 name controlplane-758h2
+   qm set 104 --name controlplane-758h2
    qm config 104 | grep -E 'name|smbios1|macaddr'   # sanity check
    ```
 

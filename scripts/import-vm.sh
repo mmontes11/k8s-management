@@ -89,7 +89,7 @@ if [ "$cur_name" = "$KUBERNETES_PROXMOX_MACHINE" ]; then
   log "VM name already matches the ProxmoxMachine name ('$KUBERNETES_PROXMOX_MACHINE'); skipping rename"
 else
   log "Renaming Proxmox VM $PROXMOX_VM_ID: '$cur_name' -> '$KUBERNETES_PROXMOX_MACHINE'"
-  px set "$PROXMOX_VM_ID" name "$KUBERNETES_PROXMOX_MACHINE"
+  px set "$PROXMOX_VM_ID" --name "$KUBERNETES_PROXMOX_MACHINE"
   log "  now: $(px config "$PROXMOX_VM_ID" | awk '/^name:/{print $2}')"
 fi
 
