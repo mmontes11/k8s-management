@@ -133,7 +133,7 @@ When any Proxmox VM (control-plane or worker) is recreated by hand (e.g. restore
 
 Full procedure: [docs/runbook-adopt-proxmox-vm.md](docs/runbook-adopt-proxmox-vm.md).
 
-### Reference
+## Reference
 
 - [Blog post](https://a-cup-of.coffee/blog/talos-capi-proxmox/) from [@qjoly](https://github.com/qjoly/).
 - [cluster-api-operator](https://doc.crds.dev/github.com/kubernetes-sigs/cluster-api-operator)
