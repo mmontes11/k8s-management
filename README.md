@@ -145,16 +145,42 @@ So adoption is two manual inputs — point `spec.virtualMachineID` at the restor
 
 **Helper script**
 
-`scripts/import-controlplane-vm.sh` performs the two inputs above and waits for the machine to converge. Run it from a host that can reach both the Proxmox hypervisor (`qm`) and the management cluster (`kubectl`):
+`scripts/import-controlplane-vm.sh` performs the two inputs above and nothing else. It reaches the Proxmox host over SSH (the local machine does not need `qm` installed) and does a local `kubectl` patch against the management cluster:
 
 ```bash
+PROXMOX_HOST=10.0.0.11 \
+PROXMOX_USER=root \
 PROXMOX_VM_ID=104 \
 PROXMOX_MACHINE=controlplane-758h2 \
 NAMESPACE=homelab \
 scripts/import-controlplane-vm.sh
 ```
 
-It renames the Proxmox VM to match the `ProxmoxMachine` name, repoints `spec.virtualMachineID` and `spec.providerID` to the VM's real SMBIOS UUID, waits for `status.vmStatus` to become `running`, and reports the owning `Machine`'s `nodeRef`/`ready` state. It refuses to adopt a machine that is not already provisioned, and it never destroys the adopted VM. To also destroy the redundant replacement VM, pass `DESTROY_REPLACEMENT_VMID=<vmid>` (it refuses if that equals `PROXMOX_VM_ID`). The manual steps below are what the script does, for environments where you prefer to run them by hand.
+What it does — and only this:
+
+1. Reads the VM config over SSH in a strictly read-only way (`qm config <vmid>` only) to confirm the VMID, current name and SMBIOS UUID.
+2. Renames the Proxmox VM to match the `ProxmoxMachine` name (`qm set <vmid> name <name>`) — the single Proxmox-side write; VMID, disks and data are untouched.
+3. Sets `spec.virtualMachineID` on the `ProxmoxMachine` via a local `kubectl patch`.
+
+What it deliberately does **not** do: no `qm destroy`, no power on/off, no disk operations, no watching/waiting loop, and it does not destroy the redundant replacement VM. It refuses to run against a `ProxmoxMachine` that is not already provisioned (no `spec.providerID`). When it finishes it prints the read-only commands to verify the adoption yourself.
+
+**Why this is enough (provider evidence)**
+
+The provider resolves which VM a `ProxmoxMachine` owns in `FindVM`; the two changes above are exactly what that path requires:
+
+- It reads the VMID from `spec.virtualMachineID` and the node from `status.proxmoxNode`, then looks the VM up **by ID** (it never clones when a VMID is set) — `FindVM()` in [vmservice/find.go](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/find.go).
+- It then requires the VM's Proxmox `name` to **exactly equal the `ProxmoxMachine` name**; on a mismatch it treats the VM as "not initialized" and requeues — it does not clone or destroy (same file).
+- The fields it reads come from `spec.virtualMachineID` / `status.proxmoxNode` — [pkg/scope/machine.go](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/pkg/scope/machine.go) (`GetVirtualMachineID`, `LocateProxmoxNode`).
+- The clone, static-IP, bootstrap and power steps are each gated by the machine's provisioning condition reason, so an already-provisioned machine is only re-pointed — [bootstrap.go](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/bootstrap.go), [ip.go](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/ip.go), [power.go](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/power.go).
+- After `FindVM` succeeds the provider records the VM's real SMBIOS UUID as the provider ID, and the CAPI `Machine` controller links the Node to the `Machine` by that ID — no hand-wiring of `ownerReference` needed.
+- The `TalosControlPlane` stops scaling once the owned machine count equals `replicas` — `scaleUpControlPlane` in [taloscontrolplane controllers/scale.go](https://github.com/siderolabs/cluster-api-control-plane-provider-talos/blob/main/controllers/scale.go).
+
+**Confidence — how to run it safely**
+
+- It is read-only on Proxmox except for the single required rename. Run the read-only parts yourself first to sanity-check: `ssh root@10.0.0.11 qm config 104` (confirm name/uuid) and `kubectl get proxmoxmachine/controlplane-758h2 -n homelab -o yaml` (confirm `spec.providerID` is set, i.e. already provisioned).
+- Before running it, back up the management cluster (see Backup/Restore above) and confirm the restored node is a healthy control-plane member (`talosctl -n 10.0.0.40 --nodes 10.0.0.40 version`).
+- It is idempotent: if the VM name already matches it skips the rename, and re-running the patch is safe.
+- The change is reversible (see Rollback): set `spec.virtualMachineID` back to the replacement VMID and rename the VM back. Keep the replacement VM around until the adoption is verified stable.
 
 **Prerequisites**
 
