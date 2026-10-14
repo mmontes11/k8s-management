@@ -63,13 +63,6 @@ The two changes above are exactly what the adoption path requires. Each claim ma
 
 > The links point at the providers' `main` branches (currently CAPMOX `v1alpha2` / Talos control-plane `v1alpha3`). The running cluster is on `v1alpha1`. The load-bearing contracts — `FindVM` by-ID lookup, the exact name-match requirement, and the reason-gated provisioning steps — are the same across these versions; only the condition-reason constant names differ.
 
-## Confidence — how to run it safely
-
-- The script is read-only on Proxmox except for the single required rename. Run the read-only parts yourself first to sanity-check: `ssh root@10.0.0.11 qm config 104` (confirm name/uuid) and `kubectl get proxmoxmachine/controlplane-758h2 -n homelab -o yaml` (confirm `spec.providerID` is set, i.e. already provisioned).
-- Before running it, back up the management cluster (see the [Backup](../README.md#backup) / [Restore](../README.md#restore) sections in the README) and confirm the restored node is a healthy cluster member (`talosctl -n 10.0.0.40 --nodes 10.0.0.40 version`).
-- It is idempotent: if the VM name already matches it skips the rename, and re-running the patch is safe.
-- The change is reversible (see Rollback): set `spec.virtualMachineID` back to the replacement VMID and rename the VM back. Keep the replacement VM around until the adoption is verified stable.
-
 ## Prerequisites
 
 - `kubectl` configured against the management cluster (where `TalosControlPlane` / `Machine` / `ProxmoxMachine` live — namespace `homelab` here).
