@@ -143,6 +143,19 @@ The `ProxmoxMachine` controller resolves which VM it owns in `FindVM`:
 
 So adoption is two manual inputs — point `spec.virtualMachineID` at the restored VMID, and make the Proxmox VM `name` match the `ProxmoxMachine` name — and the CAPI `Machine` controller then links the Kubernetes node automatically via `providerID` matching.
 
+**Helper script**
+
+`scripts/import-controlplane-vm.sh` performs the two inputs above and waits for the machine to converge. Run it from a host that can reach both the Proxmox hypervisor (`qm`) and the management cluster (`kubectl`):
+
+```bash
+PROXMOX_VM_ID=104 \
+PROXMOX_MACHINE=controlplane-758h2 \
+NAMESPACE=homelab \
+scripts/import-controlplane-vm.sh
+```
+
+It renames the Proxmox VM to match the `ProxmoxMachine` name, repoints `spec.virtualMachineID` and `spec.providerID` to the VM's real SMBIOS UUID, waits for `status.vmStatus` to become `running`, and reports the owning `Machine`'s `nodeRef`/`ready` state. It refuses to adopt a machine that is not already provisioned, and it never destroys the adopted VM. To also destroy the redundant replacement VM, pass `DESTROY_REPLACEMENT_VMID=<vmid>` (it refuses if that equals `PROXMOX_VM_ID`). The manual steps below are what the script does, for environments where you prefer to run them by hand.
+
 **Prerequisites**
 
 - `kubectl` configured against the management cluster (where `TalosControlPlane` / `Machine` / `ProxmoxMachine` live — namespace `homelab` here).
