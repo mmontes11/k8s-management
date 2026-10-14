@@ -47,13 +47,42 @@ kind: KubeFlannelCNIConfig
 $patch: delete
 ---
 apiVersion: v1alpha1
+kind: KubeAPIServerConfig
+image: registry.k8s.io/kube-apiserver:v1.37.1
+---
+apiVersion: v1alpha1
 kind: KubeAdmissionControlConfig
 name: PodSecurity
 $patch: delete
 ---
 apiVersion: v1alpha1
-kind: KubeAPIServerConfig
-image: registry.k8s.io/kube-apiserver:v1.37.1
+kind: KubeAuditPolicyConfig
+configuration:
+  apiVersion: audit.k8s.io/v1
+  kind: Policy
+  rules:
+    - level: Metadata
+---
+apiVersion: v1alpha1
+kind: KubeAuthenticationConfig
+configuration:
+  anonymous:
+    conditions:
+      - path: /livez
+      - path: /readyz
+      - path: /healthz
+    enabled: true
+  jwt: []
+---
+apiVersion: v1alpha1
+kind: KubeAuthorizerConfig
+name: node
+type: Node
+---
+apiVersion: v1alpha1
+kind: KubeAuthorizerConfig
+name: rbac
+type: RBAC
 ---
 apiVersion: v1alpha1
 kind: KubeControllerManagerConfig
