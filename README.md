@@ -125,13 +125,13 @@ To update a template, use one of these approaches:
 
 Approach B works because `MachineDeployment` references templates by name, not UID. The reconciliation gap is brief (seconds to minutes) and the `MachineDeployment` will pick up the new template automatically.
 
-### Runbooks
+## Runbooks
 
-#### Adopt a manually restored control-plane VM into Cluster API
+#### Import a manually restored Proxmox VM into Cluster API
 
-When a control-plane VM is recreated by hand (e.g. restored from a Proxmox backup) it is no longer in CAPI state, so the `TalosControlPlane` starts provisioning a replacement. Adopt the restored VM by repointing the existing `ProxmoxMachine` at it (rename the VM to match the object + set `spec.virtualMachineID`) so CAPI tracks it instead of the replacement.
+When any Proxmox VM (control-plane or worker) is recreated by hand (e.g. restored from a Proxmox backup) it is no longer in CAPI state, so its owning controller starts provisioning a replacement. Import the restored VM by repointing the existing `ProxmoxMachine` at it (rename the VM to match the object + set `spec.virtualMachineID`) so CAPI tracks it instead of the replacement.
 
-Full procedure, provider-code evidence (with links to the provider functions), the helper script `scripts/import-controlplane-vm.sh`, and rollback steps: [docs/runbook-adopt-proxmox-vm.md](docs/runbook-adopt-proxmox-vm.md).
+Full procedure: [docs/runbook-adopt-proxmox-vm.md](docs/runbook-adopt-proxmox-vm.md).
 
 ### Reference
 
