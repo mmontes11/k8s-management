@@ -1,8 +1,10 @@
-# Runbook: Adopt a manually restored control-plane VM into Cluster API
+# Runbook: Import a manually restored Proxmox VM into Cluster API
 
-Use this when a control-plane VM has been recreated by hand (for example, restored from a Proxmox backup) and is no longer part of Cluster API state, so the `TalosControlPlane` has started provisioning a replacement machine. The goal is to make CAPI track the restored VM instead of the replacement, stop further provisioning, and keep the node operable manually with `talosctl`.
+Use this when a Proxmox VM — control-plane or worker — has been recreated by hand (for example, restored from a Proxmox backup) and is no longer part of Cluster API state, so its owning controller (the `TalosControlPlane` for control-plane machines, the `MachineDeployment` for workers) has started provisioning a replacement machine. The goal is to make CAPI track the restored VM instead of the replacement, stop further provisioning, and keep the node operable.
 
-Repointing the existing `ProxmoxMachine` is preferred over creating a brand-new `Machine` by hand: it avoids a race in which the `TalosControlPlane` recreates a machine when the owned count momentarily drops to zero, avoids hand-wiring an `ownerReference` onto a controller-owned object, and lets the normal controllers keep the state consistent.
+Repointing the existing `ProxmoxMachine` is preferred over creating a brand-new `Machine` by hand: it avoids a race in which the controller recreates a machine when the owned count momentarily drops to zero, avoids hand-wiring an `ownerReference` onto a controller-owned object, and lets the normal controllers keep the state consistent.
+
+The two changes are identical for every machine. The concrete `Steps` / `Verification` / `Rollback` below are the control-plane case (restored VM `104`); apply the same two changes to any machine by substituting its VMID, `ProxmoxMachine` name and namespace.
 
 ## How the Proxmox provider adopts an existing VM
 
@@ -16,18 +18,31 @@ So adoption is two manual inputs — point `spec.virtualMachineID` at the restor
 
 ## Helper script
 
-`scripts/import-controlplane-vm.sh` performs the two inputs above and nothing else. It reaches the Proxmox host over SSH (the local machine does not need `qm` installed) and does a local `kubectl` patch against the management cluster:
+`scripts/import-vm.sh` performs the two inputs above and nothing else. It reaches the Proxmox host over SSH (the local machine does not need `qm` installed) and does a local `kubectl` patch against the management cluster. It works for any `ProxmoxMachine`, control-plane or worker:
 
 ```bash
 PROXMOX_HOST=10.0.0.11 \
 PROXMOX_USER=root \
 PROXMOX_VM_ID=104 \
-PROXMOX_MACHINE=controlplane-758h2 \
-NAMESPACE=homelab \
-scripts/import-controlplane-vm.sh
+KUBERNETES_PROXMOX_MACHINE=controlplane-758h2 \
+KUBERNETES_NAMESPACE=homelab \
+scripts/import-vm.sh
 ```
 
-What it does — and only this:
+### Script inputs
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `PROXMOX_HOST` | `10.0.0.11` | Proxmox hypervisor hostname/IP (reached over SSH) |
+| `PROXMOX_USER` | `root` | SSH user on the Proxmox host |
+| `PROXMOX_VM_ID` | _required_ | Numeric VMID of the restored VM on the Proxmox host |
+| `KUBERNETES_PROXMOX_MACHINE` | _required_ | Name of the `ProxmoxMachine` Kubernetes object to repoint — a K8s resource, not a VM |
+| `KUBERNETES_NAMESPACE` | `homelab` | Namespace of that `ProxmoxMachine` object |
+| `SSH_OPTS` | _(empty)_ | Extra options passed to `ssh` (e.g. `-p <port>`, `-i <key>`) |
+
+`PROXMOX_*` are the Proxmox-side inputs; `KUBERNETES_*` are the Kubernetes-side inputs.
+
+What it does:
 
 1. Reads the VM config over SSH in a strictly read-only way (`qm config <vmid>` only) to confirm the VMID, current name and SMBIOS UUID.
 2. Renames the Proxmox VM to match the `ProxmoxMachine` name (`qm set <vmid> name <name>`) — the single Proxmox-side write; VMID, disks and data are untouched.
@@ -44,14 +59,14 @@ The two changes above are exactly what the adoption path requires. Each claim ma
 - The fields it reads come from `spec.virtualMachineID` / `status.proxmoxNode` — [`scope.GetVirtualMachineID`](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/pkg/scope/machine.go), [`scope.LocateProxmoxNode`](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/pkg/scope/machine.go).
 - The clone, static-IP, bootstrap and power steps are each gated by the machine's provisioning condition reason, so an already-provisioned machine is only re-pointed — [`reconcileBootstrapData`](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/bootstrap.go), [`reconcileIPAddresses`](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/ip.go), [`reconcilePowerState`](https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/internal/service/vmservice/power.go).
 - After `FindVM` succeeds the provider records the VM's real SMBIOS UUID as the provider ID, and the CAPI `Machine` controller links the Node to the `Machine` by that ID — no hand-wiring of `ownerReference` needed.
-- The `TalosControlPlane` stops scaling once the owned machine count equals `replicas` — [`TalosControlPlaneReconciler.scaleUpControlPlane`](https://github.com/siderolabs/cluster-api-control-plane-provider-talos/blob/main/controllers/scale.go).
+- Once the machine counts toward the owner, scaling stops — the `TalosControlPlane` (control-plane) does so in [`TalosControlPlaneReconciler.scaleUpControlPlane`](https://github.com/siderolabs/cluster-api-control-plane-provider-talos/blob/main/controllers/scale.go), and the CAPI `MachineDeployment` (workers) reconciles its replica count the same way.
 
 > The links point at the providers' `main` branches (currently CAPMOX `v1alpha2` / Talos control-plane `v1alpha3`). The running cluster is on `v1alpha1`. The load-bearing contracts — `FindVM` by-ID lookup, the exact name-match requirement, and the reason-gated provisioning steps — are the same across these versions; only the condition-reason constant names differ.
 
 ## Confidence — how to run it safely
 
 - The script is read-only on Proxmox except for the single required rename. Run the read-only parts yourself first to sanity-check: `ssh root@10.0.0.11 qm config 104` (confirm name/uuid) and `kubectl get proxmoxmachine/controlplane-758h2 -n homelab -o yaml` (confirm `spec.providerID` is set, i.e. already provisioned).
-- Before running it, back up the management cluster (see the [Backup](../README.md#backup) / [Restore](../README.md#restore) sections in the README) and confirm the restored node is a healthy control-plane member (`talosctl -n 10.0.0.40 --nodes 10.0.0.40 version`).
+- Before running it, back up the management cluster (see the [Backup](../README.md#backup) / [Restore](../README.md#restore) sections in the README) and confirm the restored node is a healthy cluster member (`talosctl -n 10.0.0.40 --nodes 10.0.0.40 version`).
 - It is idempotent: if the VM name already matches it skips the rename, and re-running the patch is safe.
 - The change is reversible (see Rollback): set `spec.virtualMachineID` back to the replacement VMID and rename the VM back. Keep the replacement VM around until the adoption is verified stable.
 
@@ -112,6 +127,6 @@ Set `spec.virtualMachineID` back to the replacement VMID and rename VM `104`'s P
 
 ## Caveats
 
-- The `TalosControlPlane` counts owned machines (label `cluster.x-k8s.io/control-plane` + ownerReference) against `spec.replicas`. With one adopted machine and `replicas: 1` it is scale-stable and will not create another.
+- The owning controller counts its owned machines against the desired replica count — the `TalosControlPlane` (label `cluster.x-k8s.io/control-plane` + ownerReference) for control-plane, the `MachineDeployment` for workers. With the adopted machine counting, it is scale-stable and will not create another.
 - This only works when the `ProxmoxMachine` is already in its terminal (provisioned) state. If it is still mid-provisioning (reason `Cloning` / `WaitingFor…`), repointing can re-trigger provisioning steps — only adopt an already-provisioned machine.
 - Manual upgrades via `talosctl` are unaffected. To return to fully CAPI-managed control planes later, delete the adopted machine's objects and let the `TalosControlPlane` provision fresh.
